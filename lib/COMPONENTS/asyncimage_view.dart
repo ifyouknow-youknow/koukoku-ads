@@ -8,7 +8,7 @@ class AsyncImageView extends StatefulWidget {
     this.width = 100, // Default width
     this.height = 100, // Default height
     this.radius = 0, // Default radius for container
-    this.objectFit = BoxFit.cover, // Default fit
+    this.objectFit = BoxFit.contain, // Default fit
   });
 
   final String imagePath;
@@ -51,12 +51,9 @@ class _AsyncImageViewState extends State<AsyncImageView> {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.radius),
-      child: Container(
+      child: SizedBox(
         width: widget.width,
         height: widget.height,
-        decoration: BoxDecoration(
-          color: Colors.grey[300], // Placeholder color while loading
-        ),
         child: imageUrl.isNotEmpty
             ? Image.network(
                 imageUrl,
