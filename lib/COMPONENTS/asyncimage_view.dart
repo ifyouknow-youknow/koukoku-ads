@@ -8,12 +8,14 @@ class AsyncImageView extends StatefulWidget {
     this.width = 100, // Default width
     this.height = 100, // Default height
     this.radius = 0, // Default radius for container
+    this.objectFit = BoxFit.cover, // Default fit
   });
 
   final String imagePath;
   final double width;
   final double height;
   final double radius;
+  final BoxFit objectFit; // Added objectFit property
 
   @override
   _AsyncImageViewState createState() => _AsyncImageViewState();
@@ -60,7 +62,7 @@ class _AsyncImageViewState extends State<AsyncImageView> {
                 imageUrl,
                 width: widget.width,
                 height: widget.height,
-                fit: BoxFit.cover, // Adjust the fit based on your requirement
+                fit: widget.objectFit, // Use the objectFit property
               )
             : const Center(
                 child:
