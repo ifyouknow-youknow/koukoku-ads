@@ -24,23 +24,31 @@ class _FutureViewState extends State<FutureView> {
     return FutureBuilder<dynamic>(
       future: widget.future,
       builder: (context, snapshot) {
+        Widget content;
+
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingView();
+          content = const LoadingView();
         } else if (snapshot.hasError) {
-          return TextView(
+          content = TextView(
             text: 'Error: ${snapshot.error}',
             color: Colors.red,
           );
         } else if (snapshot.hasData) {
           final data = snapshot.data;
           if (data != null && data.isNotEmpty) {
-            return widget.childBuilder(data);
+            content = widget.childBuilder(data);
           } else {
-            return widget.emptyWidget;
+            content = widget.emptyWidget;
           }
         } else {
-          return const TextView(text: 'No data');
+          content = const TextView(text: 'No data');
         }
+
+        return Align(
+          alignment:
+              Alignment.topCenter, // Align to the top, you can change as needed
+          child: content,
+        );
       },
     );
   }

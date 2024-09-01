@@ -1,3 +1,4 @@
+import 'package:iic_app_template_flutter/MODELS/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:iic_app_template_flutter/COMPONENTS/button_view.dart';
@@ -75,7 +76,7 @@ class _CalendarViewState extends State<CalendarView> {
     final months = getMonthsOfYear(widget.year);
 
     return SizedBox(
-      height: 420,
+      height: getWidth(context),
       child: Column(
         children: [
           Expanded(
@@ -85,6 +86,8 @@ class _CalendarViewState extends State<CalendarView> {
               itemBuilder: (context, index) {
                 final month = months[index];
                 final daysInMonth = getDaysOfMonth(index + 1, widget.year);
+                final firstDayOfMonth = DateTime(widget.year, index + 1, 1);
+                final startingWeekday = firstDayOfMonth.weekday;
 
                 return PaddingView(
                   child: Column(
@@ -112,7 +115,7 @@ class _CalendarViewState extends State<CalendarView> {
                       Expanded(
                         child: GridView.builder(
                           padding: EdgeInsets.zero,
-                          itemCount: daysInMonth.length,
+                          itemCount: daysInMonth.length + startingWeekday - 1,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
@@ -121,7 +124,11 @@ class _CalendarViewState extends State<CalendarView> {
                             crossAxisSpacing: 4,
                           ),
                           itemBuilder: (context, dayIndex) {
-                            final day = daysInMonth[dayIndex];
+                            if (dayIndex < startingWeekday - 1) {
+                              return const SizedBox(); // Empty space
+                            }
+                            final day =
+                                daysInMonth[dayIndex - (startingWeekday - 1)];
                             final date = DateTime(widget.year, index + 1, day);
                             final isHighlighted =
                                 widget.highlightedDates.any((highlightedDate) {
@@ -175,6 +182,9 @@ class _CalendarViewState extends State<CalendarView> {
               activeDotColor: Colors.blue,
             ),
           ),
+          SizedBox(
+            height: 15,
+          )
         ],
       ),
     );
