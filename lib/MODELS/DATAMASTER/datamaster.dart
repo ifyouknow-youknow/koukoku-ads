@@ -16,9 +16,6 @@ class DataMaster with _DataMasterToggles, _DataMasterStrings, _DataMasterLists {
   LatLng get myLocation => _myLocation;
   void setMyLocation(LatLng value) => _myLocation = value;
   //
-  String _token = "";
-  String get token => _token;
-  void setToken(String value) => _token = token;
 
   DataMaster();
 

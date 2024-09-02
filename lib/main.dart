@@ -11,14 +11,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final dm = DataMaster();
-  final token = await messaging_SetUp();
-  dm.setToken(token);
   await dotenv.load(fileName: "lib/.env");
 
   runApp(
     MaterialApp(
-      home: PlaygroundView(dm: dm),
+      home: PlaygroundView(dm: DataMaster()),
     ),
     // initialRoute: "/",
     // routes: {
