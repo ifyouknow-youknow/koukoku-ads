@@ -599,7 +599,7 @@ Future<bool> storage_UploadMedia(String path, File file) async {
 // MESSAGING
 // SET UP
 
-Future<void> messaging_SetUp() async {
+Future<String> messaging_SetUp() async {
   await messaging.requestPermission();
   fetchAPNSToken();
   // Fetch the device token
@@ -623,6 +623,7 @@ Future<void> messaging_SetUp() async {
       // Handle notification tap
     }
   });
+  return token!;
 }
 
 Future<void> messaging_IosSetUp() async {
