@@ -7,9 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iic_app_template_flutter/MODELS/DATAMASTER/datamaster.dart';
-import 'package:iic_app_template_flutter/VIEWS/playground.dart';
-import 'package:iic_app_template_flutter/main.dart';
+import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
+import 'package:koukoku_ads/VIEWS/playground.dart';
+import 'package:koukoku_ads/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

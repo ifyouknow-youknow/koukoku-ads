@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iic_app_template_flutter/COMPONENTS/blur_view.dart';
-import 'package:iic_app_template_flutter/COMPONENTS/text_view.dart';
+import 'package:koukoku_ads/COMPONENTS/blur_view.dart';
+import 'package:koukoku_ads/COMPONENTS/text_view.dart';
 
 class AlertView extends StatefulWidget {
   final String title;

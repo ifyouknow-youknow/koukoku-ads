@@ -6,8 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:iic_app_template_flutter/FUNCTIONS/misc.dart';
-import 'package:iic_app_template_flutter/FUNCTIONS/server.dart';
+import 'package:koukoku_ads/FUNCTIONS/misc.dart';
+import 'package:koukoku_ads/FUNCTIONS/server.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 FirebaseAuth auth = FirebaseAuth.instance;
