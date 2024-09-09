@@ -29,11 +29,12 @@ class _SignUpState extends State<SignUp> {
                   onPress: () {
                     nav_Pop(context);
                   },
-                  child: TextView(
+                  child: const TextView(
                     text: 'back',
                     size: 16,
                     color: Colors.white,
                     weight: FontWeight.w500,
+                    wrap: false,
                   ),
                 )
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
 import 'package:koukoku_ads/COMPONENTS/button_view.dart';
 import 'package:koukoku_ads/COMPONENTS/future_view.dart';
+import 'package:koukoku_ads/COMPONENTS/image_view.dart';
 import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
@@ -10,6 +11,7 @@ import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
+import 'package:koukoku_ads/VIEWS/business_profile.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
 
 class Browse extends StatefulWidget {
@@ -67,6 +69,152 @@ class _BrowseState extends State<Browse> {
     return allOfThem;
   }
 
+  List<Widget> buildAdWidgets(BuildContext context, ads) {
+    List<Widget> widgets = [];
+    for (int i = 0; i < ads.length; i++) {
+      if (ads[i]['chosenOption'] == '2 x 2') {
+        widgets.add(
+          PaddingView(
+            paddingTop: 5,
+            paddingBottom: 5,
+            paddingLeft: 10,
+            paddingRight: 10,
+            child: ButtonView(
+              radius: 10,
+              onPress: () {
+                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                    () {
+                  setState(() {});
+                });
+              },
+              child: AsyncImageView(
+                radius: 10,
+                imagePath: ads[i]['imagePath'],
+                width: getWidth(context),
+                height: getWidth(context),
+                objectFit: BoxFit.fill,
+              ),
+            ),
+          ),
+        );
+      } else if (ads[i]['chosenOption'] == '2 x 1') {
+        widgets.add(
+          PaddingView(
+            paddingTop: 5,
+            paddingBottom: 5,
+            paddingLeft: 10,
+            paddingRight: 10,
+            child: ButtonView(
+              radius: 10,
+              onPress: () {
+                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                    () {
+                  setState(() {});
+                });
+              },
+              child: AsyncImageView(
+                radius: 10,
+                imagePath: ads[i]['imagePath'],
+                width: getWidth(context),
+                height: getWidth(context) / 2,
+                objectFit: BoxFit.fill,
+              ),
+            ),
+          ),
+        );
+      } else if (ads[i]['chosenOption'] == '1 x 1' &&
+          i + 1 < ads.length &&
+          ads[i + 1]['chosenOption'] == '1 x 1') {
+        // Add two consecutive '1 x 1' ads side by side
+        widgets.add(
+          PaddingView(
+            paddingTop: 5,
+            paddingBottom: 5,
+            paddingLeft: 10,
+            paddingRight: 10,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ButtonView(
+                    onPress: () {
+                      nav_Push(
+                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                          () {
+                        setState(() {});
+                      });
+                    },
+                    child: AsyncImageView(
+                      radius: 10,
+                      imagePath: ads[i]['imagePath'],
+                      width: getWidth(context) / 2,
+                      height: getWidth(context) / 2,
+                      objectFit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ButtonView(
+                    onPress: () {
+                      nav_Push(
+                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                          () {
+                        setState(() {});
+                      });
+                    },
+                    child: AsyncImageView(
+                      radius: 10,
+                      imagePath: ads[i + 1]['imagePath'],
+                      width: getWidth(context) / 2,
+                      height: getWidth(context) / 2,
+                      objectFit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        i++; // Skip the next ad as it has been processed
+      } else if (ads[i]['chosenOption'] == '1 x 1') {
+        // Handle a single '1 x 1' ad when no pair is available
+        widgets.add(
+          PaddingView(
+            paddingTop: 5,
+            paddingBottom: 5,
+            paddingLeft: 10,
+            paddingRight: 10,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ButtonView(
+                    onPress: () {
+                      nav_Push(
+                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                          () {
+                        setState(() {});
+                      });
+                    },
+                    child: AsyncImageView(
+                      radius: 10,
+                      imagePath: ads[i]['imagePath'],
+                      width: getWidth(context) / 2,
+                      height: getWidth(context) / 2,
+                      objectFit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    return widgets;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,10 +228,24 @@ class _BrowseState extends State<Browse> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const TextView(
-              text: 'Browse Ads',
-              size: 18,
-              weight: FontWeight.w400,
+            const Row(
+              children: [
+                ImageView(
+                  imagePath: 'assets/logo.png',
+                  width: 30,
+                  height: 30,
+                  radius: 6,
+                ),
+                SizedBox(
+                  width: 6,
+                ),
+                TextView(
+                  text: 'Explore',
+                  size: 18,
+                  weight: FontWeight.w500,
+                  wrap: false,
+                ),
+              ],
             ),
             ButtonView(
                 child: const Row(
@@ -110,103 +272,23 @@ class _BrowseState extends State<Browse> {
       ),
       Expanded(
         child: SingleChildScrollView(
-          child: FutureView(
-            future: _fetchLocalAds(),
-            childBuilder: (ads) {
-              return Column(
-                children: [
-                  for (int i = 0; i < ads.length; i++)
-                    if (ads[i]['chosenOption'] == '2 x 2')
-                      PaddingView(
-                        paddingTop: 5,
-                        paddingBottom: 5,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        child: ButtonView(
-                          radius: 10,
-                          onPress: () {},
-                          child: AsyncImageView(
-                            radius: 10,
-                            imagePath: ads[i]['imagePath'],
-                            width: getWidth(context),
-                            height: getWidth(context),
-                            objectFit: BoxFit.fill,
-                          ),
-                        ),
-                      )
-                    else if (ads[i]['chosenOption'] == '2 x 1')
-                      PaddingView(
-                        paddingTop: 5,
-                        paddingBottom: 5,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        child: ButtonView(
-                          radius: 10,
-                          onPress: () {},
-                          child: AsyncImageView(
-                            radius: 10,
-                            imagePath: ads[i]['imagePath'],
-                            width: getWidth(context),
-                            height: getWidth(context) / 2,
-                            objectFit: BoxFit.fill,
-                          ),
-                        ),
-                      )
-                    // Handle two consecutive 1 x 1 ads side by side
-                    else if (ads[i]['chosenOption'] == '1 x 1' &&
-                        i + 1 < ads.length &&
-                        ads[i + 1]['chosenOption'] == '1 x 1')
-                      PaddingView(
-                        paddingTop: 5,
-                        paddingBottom: 5,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            AsyncImageView(
-                              radius: 10,
-                              imagePath: ads[i]['imagePath'],
-                              width: getWidth(context) / 2,
-                              height: getWidth(context) / 2,
-                              objectFit: BoxFit.fill,
-                            ),
-                            AsyncImageView(
-                              radius: 10,
-                              imagePath: ads[i + 1]['imagePath'],
-                              width: getWidth(context) / 2,
-                              height: getWidth(context) / 2,
-                              objectFit: BoxFit.fill,
-                            ),
-                          ],
-                        ),
-                      )
-                    // Handle single 1 x 1 ad if no pair is available
-                    else if (ads[i]['chosenOption'] == '1 x 1')
-                      PaddingView(
-                        paddingTop: 5,
-                        paddingBottom: 5,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        child: Row(
-                          children: [
-                            AsyncImageView(
-                              radius: 10,
-                              imagePath: ads[i]['imagePath'],
-                              width: getWidth(context) / 2,
-                              height: getWidth(context) / 2,
-                              objectFit: BoxFit.fill,
-                            ),
-                            Spacer(), // This pushes the 1 x 1 ad to the left
-                          ],
-                        ),
-                      ), // Add some spacing between ads
-                ],
-              );
-            },
-            emptyWidget: const TextView(
-              text: 'No ads available in your area.',
-            ),
+          child: Column(
+            children: [
+              FutureView(
+                future: _fetchLocalAds(),
+                childBuilder: (ads) {
+                  return Column(
+                    children: [...buildAdWidgets(context, ads)],
+                  );
+                },
+                emptyWidget: const TextView(
+                  text: 'No ads available in your area.',
+                ),
+              ),
+              const SizedBox(
+                height: 100,
+              )
+            ],
           ),
         ),
       ),

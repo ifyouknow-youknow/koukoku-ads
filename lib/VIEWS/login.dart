@@ -61,6 +61,7 @@ class _LoginState extends State<Login> {
                               color: Colors.white,
                               size: 20,
                               weight: FontWeight.w600,
+                              wrap: false,
                             ),
                           ],
                         ),
@@ -75,6 +76,7 @@ class _LoginState extends State<Login> {
                               color: Colors.white,
                               size: 20,
                               weight: FontWeight.w600,
+                              wrap: false,
                             ),
                             SizedBox(
                               width: 10,
