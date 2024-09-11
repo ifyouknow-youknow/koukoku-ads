@@ -138,9 +138,8 @@ class _BrowseState extends State<Browse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      nav_Push(
-                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                          () {
+                      nav_Push(context,
+                          BusinessProfile(dm: widget.dm, ad: ads[i - 1]), () {
                         setState(() {});
                       });
                     },
