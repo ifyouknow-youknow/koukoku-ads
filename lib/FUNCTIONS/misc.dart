@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 String randomString(int length) {
   const String chars =
@@ -71,4 +72,14 @@ Future<String> writeToFile(dynamic fileData) async {
   final file = File(filePath);
   await file.writeAsBytes(fileData);
   return filePath;
+}
+
+Future<void> callPhoneNumber(String phoneNumber) async {
+  final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+
+  if (await canLaunchUrl(phoneUri)) {
+    await launchUrl(phoneUri);
+  } else {
+    throw 'Could not launch $phoneNumber';
+  }
 }

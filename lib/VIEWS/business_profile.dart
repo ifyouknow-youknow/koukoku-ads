@@ -10,6 +10,8 @@ import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
 import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:koukoku_ads/FUNCTIONS/date.dart';
+import 'package:koukoku_ads/FUNCTIONS/location.dart';
+import 'package:koukoku_ads/FUNCTIONS/misc.dart';
 import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
@@ -39,11 +41,61 @@ class _BusinessProfileState extends State<BusinessProfile> {
   }
 
   void _fetchAds() async {
+    var oneByOne = [];
+    var oneByTwo = [];
+    var twoByTwo = [];
+
+    // Fetch documents from Firebase
     final docs = await firebase_GetAllDocumentsQueried('KoukokuAds_Campaigns', [
-      {'field': 'userId', 'operator': '==', 'value': widget.ad['userId']}
+      {'field': 'userId', 'operator': '==', 'value': widget.ad['userId']},
     ]);
+
+    // Categorize ads by 'chosenOption'
+    for (var doc in docs.where((ting) => ting['id'] != widget.ad['id'])) {
+      if (doc['chosenOption'] == '1 x 1') {
+        oneByOne.add(doc);
+      } else if (doc['chosenOption'] == '2 x 1') {
+        oneByTwo.add(doc);
+      } else if (doc['chosenOption'] == '2 x 2') {
+        twoByTwo.add(doc);
+      }
+    }
+
+    var allOfThem = [];
+    int index1x1 = 0, index2x1 = 0, index2x2 = 0;
+
+    // Loop through the lists and add items to allOfThem
+    while ((index1x1 + 1 < oneByOne.length) ||
+        index2x1 < oneByTwo.length ||
+        index2x2 < twoByTwo.length) {
+      if (index1x1 + 1 < oneByOne.length) {
+        allOfThem.add(oneByOne[index1x1++]);
+        allOfThem.add(oneByOne[index1x1++]);
+      }
+
+      if (index2x1 < oneByTwo.length) {
+        allOfThem.add(oneByTwo[index2x1++]);
+      }
+
+      if (index2x2 < twoByTwo.length) {
+        allOfThem.add(twoByTwo[index2x2++]);
+      }
+    }
+
+    // Add any remaining 1x1 ads (pair-wise)
+    while (index1x1 + 1 < oneByOne.length) {
+      allOfThem.add(oneByOne[index1x1++]);
+      allOfThem.add(oneByOne[index1x1++]);
+    }
+
+    // If there's exactly one 1x1 ad left, add it at the end
+    if (index1x1 < oneByOne.length) {
+      allOfThem.add(oneByOne[index1x1]);
+    }
+
+    // Update the state excluding the current ad
     setState(() {
-      ads = docs.where((ting) => ting['id'] != widget.ad['id']).toList();
+      ads = allOfThem.where((ting) => ting['id'] != widget.ad['id']).toList();
     });
   }
 
@@ -381,7 +433,9 @@ class _BusinessProfileState extends State<BusinessProfile> {
                             size: 22,
                           ),
                         ),
-                        onPress: () {})
+                        onPress: () async {
+                          await callPhoneNumber(businessInfo?['phone']);
+                        })
                   ],
                 ),
               ),
@@ -437,7 +491,11 @@ class _BusinessProfileState extends State<BusinessProfile> {
                                 size: 22,
                               ),
                             ),
-                            onPress: () {})
+                            onPress: () {
+                              getDirections(LatLng(
+                                  businessInfo?['location']['latitude'],
+                                  businessInfo?['location']['longitude']));
+                            })
                       ],
                     ),
                     const SizedBox(

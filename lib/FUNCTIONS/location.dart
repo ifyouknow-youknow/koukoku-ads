@@ -1,5 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<Position?> getLocation(BuildContext context) async {
   while (true) {
@@ -50,5 +52,20 @@ Future<Position?> getLocation(BuildContext context) async {
       print('Error getting location: $error');
       return null;
     }
+  }
+}
+
+Future<void> getDirections(LatLng destination) async {
+  final String googleMapsUrl =
+      'https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}&travelmode=driving';
+
+  if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+    await launchUrl(
+      Uri.parse(googleMapsUrl),
+      mode: LaunchMode
+          .externalApplication, // Ensures it opens in the default browser
+    );
+  } else {
+    throw 'Could not open Google Maps for directions';
   }
 }

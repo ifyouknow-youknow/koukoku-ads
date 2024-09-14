@@ -27,6 +27,30 @@ class _LoginState extends State<Login> {
 
   void onLogin() async {
     //
+    final email = _emailController.text;
+    final pass = _passwordController.text;
+
+    if (email.isEmpty || pass.isEmpty) {
+      setState(() {
+        widget.dm.alertSomethingWrong();
+      });
+      return;
+    }
+    setState(() {
+      widget.dm.setToggleLoading(true);
+    });
+    final user = await auth_SignIn(email, pass);
+    if (user != null) {
+      setState(() {
+        widget.dm.setToggleLoading(false);
+      });
+      // GO SOMEWHERE
+    } else {
+      setState(() {
+        widget.dm.setToggleLoading(false);
+        widget.dm.alertSomethingWrong();
+      });
+    }
   }
 
   @override

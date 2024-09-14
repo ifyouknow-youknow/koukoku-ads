@@ -10,19 +10,18 @@ import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/business_profile.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
+import 'package:koukoku_ads/MODELS/screen.dart';
 
-class Browse extends StatefulWidget {
+class UserBrowse extends StatefulWidget {
   final DataMaster dm;
-  const Browse({super.key, required this.dm});
+  const UserBrowse({super.key, required this.dm});
 
   @override
-  State<Browse> createState() => _BrowseState();
+  State<UserBrowse> createState() => _UserBrowseState();
 }
 
-class _BrowseState extends State<Browse> {
+class _UserBrowseState extends State<UserBrowse> {
   //
   Future<List<dynamic>> _fetchLocalAds() async {
     var oneByOne = [];
@@ -92,10 +91,10 @@ class _BrowseState extends State<Browse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                    () {
-                  setState(() {});
-                });
+                // nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                //     () {
+                //   setState(() {});
+                // });
               },
               child: AsyncImageView(
                 radius: 10,
@@ -117,10 +116,10 @@ class _BrowseState extends State<Browse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                    () {
-                  setState(() {});
-                });
+                // nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                //     () {
+                //   setState(() {});
+                // });
               },
               child: AsyncImageView(
                 radius: 10,
@@ -148,10 +147,10 @@ class _BrowseState extends State<Browse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      nav_Push(context,
-                          BusinessProfile(dm: widget.dm, ad: ads[i - 1]), () {
-                        setState(() {});
-                      });
+                      // nav_Push(context,
+                      //     BusinessProfile(dm: widget.dm, ad: ads[i - 1]), () {
+                      //   setState(() {});
+                      // });
                     },
                     child: AsyncImageView(
                       radius: 10,
@@ -166,11 +165,11 @@ class _BrowseState extends State<Browse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      nav_Push(
-                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                          () {
-                        setState(() {});
-                      });
+                      // nav_Push(
+                      //     context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                      //     () {
+                      //   setState(() {});
+                      // });
                     },
                     child: AsyncImageView(
                       radius: 10,
@@ -199,11 +198,11 @@ class _BrowseState extends State<Browse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      nav_Push(
-                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                          () {
-                        setState(() {});
-                      });
+                      // nav_Push(
+                      //     context, BusinessProfile(dm: widget.dm, ad: ads[i]),
+                      //     () {
+                      //   setState(() {});
+                      // });
                     },
                     child: AsyncImageView(
                       radius: 10,
