@@ -12,6 +12,7 @@ import 'package:koukoku_ads/MODELS/firebase.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
 import 'package:koukoku_ads/VIEWS/browse.dart';
 import 'package:koukoku_ads/VIEWS/signup.dart';
+import 'package:koukoku_ads/VIEWS/user_browse.dart';
 
 class Login extends StatefulWidget {
   final DataMaster dm;
@@ -45,12 +46,36 @@ class _LoginState extends State<Login> {
         widget.dm.setToggleLoading(false);
       });
       // GO SOMEWHERE
+      nav_PushAndRemove(context, UserBrowse(dm: widget.dm));
     } else {
       setState(() {
         widget.dm.setToggleLoading(false);
         widget.dm.alertSomethingWrong();
       });
     }
+  }
+
+  void init() async {
+    setState(() {
+      widget.dm.setToggleLoading(true);
+    });
+    final signedIn = await widget.dm.checkUser();
+    if (signedIn) {
+      setState(() {
+        widget.dm.setToggleLoading(false);
+      });
+      nav_PushAndRemove(context, UserBrowse(dm: widget.dm));
+      return;
+    }
+    setState(() {
+      widget.dm.setToggleLoading(false);
+    });
+  }
+
+  @override
+  void initState() {
+    init();
+    super.initState();
   }
 
   @override
@@ -90,7 +115,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                         onPress: () {
-                          nav_Push(context, Browse(dm: widget.dm));
+                          nav_PushAndRemove(context, Browse(dm: widget.dm));
                         }),
                     ButtonView(
                         child: const Row(
@@ -118,11 +143,13 @@ class _LoginState extends State<Login> {
                 ),
               ),
               const Spacer(),
-              ImageView(
-                imagePath: 'assets/logo.png',
-                width: getWidth(context) * 0.8,
-                height: getWidth(context) * 0.8,
-                objectFit: BoxFit.fill,
+              Center(
+                child: ImageView(
+                  imagePath: 'assets/logo.png',
+                  width: getWidth(context) * 0.8,
+                  height: getWidth(context) * 0.8,
+                  objectFit: BoxFit.fill,
+                ),
               ),
               const Spacer(), // This will push the text to the bottom
               PaddingView(

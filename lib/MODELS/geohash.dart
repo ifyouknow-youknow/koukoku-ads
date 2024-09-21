@@ -3,45 +3,47 @@ class Geohash {
 
   static String encode(double latitude, double longitude,
       {int precision = 10}) {
-    final lat = _encode(latitude, -90.0, 90.0, 5);
-    final lon = _encode(longitude, -180.0, 180.0, 5);
+    final totalBits = precision * 5; // Total bits for given precision
+    final latBits = _encode(latitude, -90.0, 90.0, totalBits ~/ 2);
+    final lonBits = _encode(longitude, -180.0, 180.0, totalBits ~/ 2);
 
+    List<int> bitStream = [];
+    for (int i = 0; i < totalBits ~/ 2; i++) {
+      bitStream.add(lonBits[i]); // Add longitude bit
+      bitStream.add(latBits[i]); // Add latitude bit
+    }
+
+    // Convert bitstream to base32 geohash
     String geohash = '';
-    for (int i = 0; i < 5; i++) {
-      int bit = 0;
+    for (int i = 0; i < bitStream.length; i += 5) {
       int hash = 0;
       for (int j = 0; j < 5; j++) {
-        bit = (bit << 1) | ((lat[j] << 1) | lon[j]);
-        hash = (hash << 1) | (lat[j] ^ lon[j]);
+        hash = (hash << 1) | (i + j < bitStream.length ? bitStream[i + j] : 0);
       }
       geohash += _base32[hash];
     }
 
+    // Return the geohash with the required precision
     return geohash.substring(0, precision);
   }
 
+  // This method encodes a value (latitude or longitude) into a list of bits
   static List<int> _encode(double value, double min, double max, int bits) {
-    final List<int> bitArray = List.filled(bits, 0);
-    int bit = 0;
-    int hash = 0;
-
+    List<int> bitArray = [];
     for (int i = 0; i < bits; i++) {
       double mid = (min + max) / 2;
       if (value > mid) {
-        bit = 1;
+        bitArray.add(1);
         min = mid;
       } else {
-        bit = 0;
+        bitArray.add(0);
         max = mid;
       }
-
-      hash = (hash << 1) | bit;
-      bitArray[i] = hash;
     }
-
     return bitArray;
   }
 
+  // Decoding method remains unchanged
   static Map<String, double> decode(String geohash) {
     double latMin = -90.0, latMax = 90.0;
     double lonMin = -180.0, lonMax = 180.0;

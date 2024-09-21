@@ -5,13 +5,17 @@ import 'package:koukoku_ads/COMPONENTS/future_view.dart';
 import 'package:koukoku_ads/COMPONENTS/image_view.dart';
 import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
+import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
+import 'package:koukoku_ads/VIEWS/profile.dart';
+import 'package:koukoku_ads/VIEWS/user_business_profile.dart';
 
 class UserBrowse extends StatefulWidget {
   final DataMaster dm;
@@ -22,64 +26,54 @@ class UserBrowse extends StatefulWidget {
 }
 
 class _UserBrowseState extends State<UserBrowse> {
-  //
-  Future<List<dynamic>> _fetchLocalAds() async {
-    var oneByOne = [];
-    var oneByTwo = [];
-    var twoByTwo = [];
+  // Pagination handling
+  dynamic lastDoc;
+  List<dynamic> ads = [];
+  bool isLoading = false;
+  int limit = 4;
+  bool _noMore = false;
 
-    // Fetch documents from Firebase, ordered by 'date'
-    final docs = await firebase_GetAllDocumentsOrdered(
-        '${appName}_Campaigns', 'date', 'desc');
+  Future<void> _fetchLocalAds() async {
+    if (isLoading) return; // Prevent multiple calls
+    setState(() {
+      isLoading = true;
+    });
 
-    // Categorize ads by 'chosenOption'
-    for (var doc in docs) {
-      if (doc['chosenOption'] == '1 x 1') {
-        oneByOne.add(doc);
-      } else if (doc['chosenOption'] == '2 x 1') {
-        oneByTwo.add(doc);
-      } else if (doc['chosenOption'] == '2 x 2') {
-        twoByTwo.add(doc);
+    try {
+      // Fetch documents from Firebase with pagination
+      final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
+        '${appName}_Campaigns',
+        [
+          {'field': 'active', 'operator': '==', 'value': true},
+        ],
+        limit,
+        geohash: '9mu9zms751',
+        distance: 10,
+        lastDoc: lastDoc,
+      );
+
+      if (docs.isNotEmpty) {
+        setState(() {
+          lastDoc = docs.last?['doc']; // Update lastDoc for pagination
+          ads.addAll(docs); // Append new ads to the existing list
+        });
+      } else if (docs.isEmpty || docs.length < limit) {
+        setState(() {
+          _noMore = true;
+        });
       }
+    } catch (error) {
+      print('Error fetching ads: $error');
+    } finally {
+      setState(() {
+        isLoading = false; // Always reset loading state
+      });
     }
-
-    var allOfThem = [];
-    int index1x1 = 0, index2x1 = 0, index2x2 = 0;
-
-    // Loop through the lists and add items to allOfThem
-    while ((index1x1 + 1 < oneByOne.length) ||
-        index2x1 < oneByTwo.length ||
-        index2x2 < twoByTwo.length) {
-      if (index1x1 + 1 < oneByOne.length) {
-        allOfThem.add(oneByOne[index1x1++]);
-        allOfThem.add(oneByOne[index1x1++]);
-      }
-
-      if (index2x1 < oneByTwo.length) {
-        allOfThem.add(oneByTwo[index2x1++]);
-      }
-
-      if (index2x2 < twoByTwo.length) {
-        allOfThem.add(twoByTwo[index2x2++]);
-      }
-    }
-
-    // Add any remaining 1x1 ads (pair-wise)
-    while (index1x1 + 1 < oneByOne.length) {
-      allOfThem.add(oneByOne[index1x1++]);
-      allOfThem.add(oneByOne[index1x1++]);
-    }
-
-    // If there's exactly one 1x1 ad left, add it at the end
-    if (index1x1 < oneByOne.length) {
-      allOfThem.add(oneByOne[index1x1]);
-    }
-
-    return allOfThem;
   }
 
-  List<Widget> buildAdWidgets(BuildContext context, ads) {
+  List<Widget> buildAdWidgets(BuildContext context, List<dynamic> ads) {
     List<Widget> widgets = [];
+
     for (int i = 0; i < ads.length; i++) {
       if (ads[i]['chosenOption'] == '2 x 2') {
         widgets.add(
@@ -91,10 +85,11 @@ class _UserBrowseState extends State<UserBrowse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                // nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                //     () {
-                //   setState(() {});
-                // });
+                nav_Push(
+                  context,
+                  UserBusinessProfile(dm: widget.dm, ad: ads[i]),
+                  () => setState(() {}),
+                );
               },
               child: AsyncImageView(
                 radius: 10,
@@ -116,10 +111,11 @@ class _UserBrowseState extends State<UserBrowse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                // nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                //     () {
-                //   setState(() {});
-                // });
+                nav_Push(
+                  context,
+                  UserBusinessProfile(dm: widget.dm, ad: ads[i]),
+                  () => setState(() {}),
+                );
               },
               child: AsyncImageView(
                 radius: 10,
@@ -147,10 +143,11 @@ class _UserBrowseState extends State<UserBrowse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      // nav_Push(context,
-                      //     BusinessProfile(dm: widget.dm, ad: ads[i - 1]), () {
-                      //   setState(() {});
-                      // });
+                      nav_Push(context,
+                          UserBusinessProfile(dm: widget.dm, ad: ads[i - 1]),
+                          () {
+                        setState(() {});
+                      });
                     },
                     child: AsyncImageView(
                       radius: 10,
@@ -165,11 +162,10 @@ class _UserBrowseState extends State<UserBrowse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      // nav_Push(
-                      //     context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                      //     () {
-                      //   setState(() {});
-                      // });
+                      nav_Push(context,
+                          UserBusinessProfile(dm: widget.dm, ad: ads[i]), () {
+                        setState(() {});
+                      });
                     },
                     child: AsyncImageView(
                       radius: 10,
@@ -198,11 +194,10 @@ class _UserBrowseState extends State<UserBrowse> {
                 Expanded(
                   child: ButtonView(
                     onPress: () {
-                      // nav_Push(
-                      //     context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                      //     () {
-                      //   setState(() {});
-                      // });
+                      nav_Push(context,
+                          UserBusinessProfile(dm: widget.dm, ad: ads[i]), () {
+                        setState(() {});
+                      });
                     },
                     child: AsyncImageView(
                       radius: 10,
@@ -213,7 +208,16 @@ class _UserBrowseState extends State<UserBrowse> {
                     ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ImageView(
+                    radius: 10,
+                    imagePath: 'assets/ad1.png',
+                    width: getWidth(context) / 2,
+                    height: getWidth(context) / 2,
+                    objectFit: BoxFit.fill,
+                  ),
+                ),
               ],
             ),
           ),
@@ -226,80 +230,97 @@ class _UserBrowseState extends State<UserBrowse> {
   @override
   void initState() {
     super.initState();
-    _fetchLocalAds();
+    _fetchLocalAds(); // Fetch ads on initialization
   }
 
   @override
   Widget build(BuildContext context) {
-    return MainView(dm: widget.dm, children: [
-      PaddingView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Row(
-              children: [
-                ImageView(
-                  imagePath: 'assets/logo.png',
-                  width: 30,
-                  height: 30,
-                  radius: 6,
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                TextView(
-                  text: 'Explore',
-                  size: 18,
-                  weight: FontWeight.w500,
-                  wrap: false,
-                ),
-              ],
-            ),
-            ButtonView(
-                child: const Row(
-                  children: [
-                    TextView(
-                      text: 'log in',
-                      size: 18,
-                      weight: FontWeight.w500,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: 20,
-                    )
-                  ],
+    return MainView(
+      dm: widget.dm,
+      children: [
+        PaddingView(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  ImageView(
+                    imagePath: 'assets/logo.png',
+                    width: 30,
+                    height: 30,
+                    radius: 6,
+                  ),
+                  SizedBox(width: 6),
+                  TextView(
+                    text: 'Explore',
+                    size: 18,
+                    weight: FontWeight.w500,
+                    wrap: false,
+                  ),
+                ],
+              ),
+              ButtonView(
+                child: Icon(
+                  Icons.face,
+                  color: hexToColor("#FF1F54"),
+                  size: 34,
                 ),
                 onPress: () {
-                  nav_PushAndRemove(context, Login(dm: widget.dm));
-                })
-          ],
-        ),
-      ),
-      Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              FutureView(
-                future: _fetchLocalAds(),
-                childBuilder: (ads) {
-                  return Column(
-                    children: [...buildAdWidgets(context, ads)],
-                  );
+                  nav_Push(context, Profile(dm: widget.dm));
                 },
-                emptyWidget: const TextView(
-                  text: 'No ads available in your area.',
-                ),
               ),
-              const SizedBox(
-                height: 100,
-              )
             ],
           ),
         ),
-      ),
-    ]);
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Column(
+                  children: buildAdWidgets(context, ads),
+                ),
+                if (_noMore)
+                  ImageView(
+                    imagePath: 'assets/nomore.png',
+                    width: getWidth(context) * 0.8,
+                    height: getWidth(context) * 0.6,
+                    objectFit: BoxFit.contain,
+                  ),
+                if (!_noMore)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      PaddingView(
+                        child: ButtonView(
+                            child: Row(
+                              children: [
+                                TextView(
+                                  text: 'see more',
+                                  size: 20,
+                                  weight: FontWeight.w500,
+                                  spacing: -1,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.waving_hand_outlined,
+                                  size: 24,
+                                  color: hexToColor("#3490F3"),
+                                )
+                              ],
+                            ),
+                            onPress: () {
+                              _fetchLocalAds();
+                            }),
+                      ),
+                    ],
+                  )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

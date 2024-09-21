@@ -6,6 +6,7 @@ import 'package:koukoku_ads/COMPONENTS/image_view.dart';
 import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
@@ -23,64 +24,48 @@ class Browse extends StatefulWidget {
 }
 
 class _BrowseState extends State<Browse> {
+  dynamic lastDoc;
+  List<dynamic> ads = [];
+  bool isLoading = false;
+  int limit = 4;
+  bool _noMore = false;
   //
-  Future<List<dynamic>> _fetchLocalAds() async {
-    var oneByOne = [];
-    var oneByTwo = [];
-    var twoByTwo = [];
+  Future<void> _fetchLocalAds() async {
+    try {
+      // Fetch documents from Firebase with pagination
+      final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
+        '${appName}_Campaigns',
+        [
+          {'field': 'active', 'operator': '==', 'value': true},
+        ],
+        limit,
+        geohash: '9mu9zms751',
+        distance: 10,
+        lastDoc: lastDoc,
+      );
 
-    // Fetch documents from Firebase, ordered by 'date'
-    final docs = await firebase_GetAllDocumentsOrdered(
-        '${appName}_Campaigns', 'date', 'desc');
-
-    // Categorize ads by 'chosenOption'
-    for (var doc in docs) {
-      if (doc['chosenOption'] == '1 x 1') {
-        oneByOne.add(doc);
-      } else if (doc['chosenOption'] == '2 x 1') {
-        oneByTwo.add(doc);
-      } else if (doc['chosenOption'] == '2 x 2') {
-        twoByTwo.add(doc);
+      if (docs.isNotEmpty) {
+        setState(() {
+          lastDoc = docs.last?['doc']; // Update lastDoc for pagination
+          ads.addAll(docs); // Append new ads to the existing list
+        });
+      } else if (docs.isEmpty || docs.length < limit) {
+        setState(() {
+          _noMore = true;
+        });
       }
+    } catch (error) {
+      print('Error fetching ads: $error');
+    } finally {
+      setState(() {
+        isLoading = false; // Always reset loading state
+      });
     }
-
-    var allOfThem = [];
-    int index1x1 = 0, index2x1 = 0, index2x2 = 0;
-
-    // Loop through the lists and add items to allOfThem
-    while ((index1x1 + 1 < oneByOne.length) ||
-        index2x1 < oneByTwo.length ||
-        index2x2 < twoByTwo.length) {
-      if (index1x1 + 1 < oneByOne.length) {
-        allOfThem.add(oneByOne[index1x1++]);
-        allOfThem.add(oneByOne[index1x1++]);
-      }
-
-      if (index2x1 < oneByTwo.length) {
-        allOfThem.add(oneByTwo[index2x1++]);
-      }
-
-      if (index2x2 < twoByTwo.length) {
-        allOfThem.add(twoByTwo[index2x2++]);
-      }
-    }
-
-    // Add any remaining 1x1 ads (pair-wise)
-    while (index1x1 + 1 < oneByOne.length) {
-      allOfThem.add(oneByOne[index1x1++]);
-      allOfThem.add(oneByOne[index1x1++]);
-    }
-
-    // If there's exactly one 1x1 ad left, add it at the end
-    if (index1x1 < oneByOne.length) {
-      allOfThem.add(oneByOne[index1x1]);
-    }
-
-    return allOfThem;
   }
 
-  List<Widget> buildAdWidgets(BuildContext context, ads) {
+  List<Widget> buildAdWidgets(BuildContext context, List<dynamic> ads) {
     List<Widget> widgets = [];
+
     for (int i = 0; i < ads.length; i++) {
       if (ads[i]['chosenOption'] == '2 x 2') {
         widgets.add(
@@ -92,10 +77,11 @@ class _BrowseState extends State<Browse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                    () {
-                  setState(() {});
-                });
+                nav_Push(
+                  context,
+                  BusinessProfile(dm: widget.dm, ad: ads[i]),
+                  () => setState(() {}),
+                );
               },
               child: AsyncImageView(
                 radius: 10,
@@ -117,10 +103,11 @@ class _BrowseState extends State<Browse> {
             child: ButtonView(
               radius: 10,
               onPress: () {
-                nav_Push(context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                    () {
-                  setState(() {});
-                });
+                nav_Push(
+                  context,
+                  BusinessProfile(dm: widget.dm, ad: ads[i]),
+                  () => setState(() {}),
+                );
               },
               child: AsyncImageView(
                 radius: 10,
@@ -214,7 +201,16 @@ class _BrowseState extends State<Browse> {
                     ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ImageView(
+                    radius: 10,
+                    imagePath: 'assets/ad1.png',
+                    width: getWidth(context) / 2,
+                    height: getWidth(context) / 2,
+                    objectFit: BoxFit.fill,
+                  ),
+                ),
               ],
             ),
           ),
@@ -283,20 +279,46 @@ class _BrowseState extends State<Browse> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              FutureView(
-                future: _fetchLocalAds(),
-                childBuilder: (ads) {
-                  return Column(
-                    children: [...buildAdWidgets(context, ads)],
-                  );
-                },
-                emptyWidget: const TextView(
-                  text: 'No ads available in your area.',
-                ),
+              Column(
+                children: buildAdWidgets(context, ads),
               ),
-              const SizedBox(
-                height: 100,
-              )
+              if (_noMore)
+                ImageView(
+                  imagePath: 'assets/nomore.png',
+                  width: getWidth(context) * 0.8,
+                  height: getWidth(context) * 0.6,
+                  objectFit: BoxFit.contain,
+                ),
+              if (!_noMore)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PaddingView(
+                      child: ButtonView(
+                          child: Row(
+                            children: [
+                              TextView(
+                                text: 'see more',
+                                size: 20,
+                                weight: FontWeight.w500,
+                                spacing: -1,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.waving_hand_outlined,
+                                size: 24,
+                                color: hexToColor("#3490F3"),
+                              )
+                            ],
+                          ),
+                          onPress: () {
+                            _fetchLocalAds();
+                          }),
+                    ),
+                  ],
+                )
             ],
           ),
         ),

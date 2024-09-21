@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
 import 'package:koukoku_ads/COMPONENTS/button_view.dart';
+import 'package:koukoku_ads/COMPONENTS/image_view.dart';
 import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/map_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
@@ -17,6 +18,7 @@ import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
+import 'package:koukoku_ads/VIEWS/login.dart';
 
 class BusinessProfile extends StatefulWidget {
   final DataMaster dm;
@@ -234,7 +236,16 @@ class _BusinessProfileState extends State<BusinessProfile> {
                     ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ImageView(
+                    radius: 10,
+                    imagePath: 'assets/ad1.png',
+                    width: getWidth(context) / 2,
+                    height: getWidth(context) / 2,
+                    objectFit: BoxFit.fill,
+                  ),
+                ),
               ],
             ),
           ),
@@ -246,7 +257,6 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchBusinessInfo();
     _fetchAds();
@@ -294,11 +304,14 @@ class _BusinessProfileState extends State<BusinessProfile> {
                     if (!_toggleQR)
                       Center(
                         child: ButtonView(
-                          onPress: () {
-                            if (widget.ad['isCoupon']) {
+                          onPress: () async {
+                            final signedIn = await widget.dm.checkUser();
+                            if (widget.ad['isCoupon'] && signedIn) {
                               setState(() {
                                 _toggleQR = true;
                               });
+                            } else {
+                              nav_Push(context, Login(dm: widget.dm));
                             }
                           },
                           child: AsyncImageView(
@@ -383,7 +396,9 @@ class _BusinessProfileState extends State<BusinessProfile> {
                     ),
                   ],
                 ),
-              ), // INFO
+              ),
+
+              // INFO
               // PHONE
               PaddingView(
                 paddingTop: 0,

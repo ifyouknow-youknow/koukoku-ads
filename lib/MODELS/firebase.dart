@@ -6,8 +6,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:koukoku_ads/FUNCTIONS/location.dart';
 import 'package:koukoku_ads/FUNCTIONS/misc.dart';
 import 'package:koukoku_ads/FUNCTIONS/server.dart';
+
+import 'package:geolocator/geolocator.dart';
+import 'package:koukoku_ads/MODELS/geohash.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -338,6 +342,134 @@ Future<List<Map<String, dynamic>>> firebase_GetAllDocumentsQueriedLimited(
   }
 }
 
+// GET ALL QUERIED LIMITED DISTANCED
+Future<List<Map<String, dynamic>?>>
+    firebase_GetAllDocumentsQueriedLimitedDistanced(
+  String coll,
+  List<Map<String, dynamic>> queries,
+  int limit, {
+  required String geohash,
+  required double distance,
+  DocumentSnapshot? lastDoc,
+}) async {
+  try {
+    Query query = db.collection(coll);
+
+    // Apply the queries
+    // for (var queryItem in queries) {
+    //   String field = queryItem['field'];
+    //   String operator = queryItem['operator'];
+    //   dynamic value = queryItem['value'];
+
+    //   // Apply query operators dynamically
+    //   switch (operator) {
+    //     case '==':
+    //       query = query.where(field, isEqualTo: value);
+    //       break;
+    //     case '!=':
+    //       query = query.where(field, isNotEqualTo: value);
+    //       break;
+    //     case '<':
+    //       query = query.where(field, isLessThan: value);
+    //       break;
+    //     case '<=':
+    //       query = query.where(field, isLessThanOrEqualTo: value);
+    //       break;
+    //     case '>':
+    //       query = query.where(field, isGreaterThan: value);
+    //       break;
+    //     case '>=':
+    //       query = query.where(field, isGreaterThanOrEqualTo: value);
+    //       break;
+    //     case 'array-contains':
+    //       query = query.where(field, arrayContains: value);
+    //       break;
+    //     case 'array-contains-any':
+    //       query = query.where(field, arrayContainsAny: value);
+    //       break;
+    //     case 'in':
+    //       query = query.where(field, whereIn: value);
+    //       break;
+    //     case 'not-in':
+    //       query = query.where(field, whereNotIn: value);
+    //       break;
+    //     default:
+    //       throw ArgumentError('Invalid operator: $operator');
+    //   }
+    // }
+
+    // Decode the geohash to get user's location
+    var center = Geohash.decode(geohash);
+    double lat = center['latitude']!;
+    double lon = center['longitude']!;
+
+    // Calculate geohash bounding box for the distance
+    List<String> geohashRange = calculateGeohashRange(lat, lon, distance);
+
+    // Filter documents by geohash range
+
+    // Limit the number of results
+    query = query.limit(limit);
+
+    // If pagination is requested, start after the last document
+    if (lastDoc != null) {
+      query = query.startAfterDocument(lastDoc);
+    } else {
+      query = query
+          .where('geohash', isGreaterThanOrEqualTo: geohashRange[0])
+          .where('geohash', isLessThanOrEqualTo: geohashRange[1]);
+    }
+
+    // Fetch the documents
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await query.get() as QuerySnapshot<Map<String, dynamic>>;
+
+    List<Map<String, dynamic>?> allThings = querySnapshot.docs
+        .map((doc) {
+          var docData = doc.data();
+
+          // Check if 'geohash' exists in the document
+          if (!docData.containsKey('geohash')) {
+            print('Document missing geohash field: ${doc.id}');
+            return null;
+          }
+
+          // Decode document's geohash to get its location
+          var docLocation = Geohash.decode(docData['geohash']);
+          double docLat = docLocation['latitude']!;
+          double docLon = docLocation['longitude']!;
+
+          // Calculate the distance between user's location and document location
+          double docDistance =
+              Geolocator.distanceBetween(lat, lon, docLat, docLon) /
+                  1000; // Convert to km
+
+          // Only return the document if it's within the specified distance
+          if (docDistance <= distance) {
+            return {
+              'id': doc.id,
+              ...docData,
+              'distance': docDistance, // Add the distance field to the document
+              'doc': doc // Store the DocumentSnapshot for pagination
+            };
+          }
+
+          return null;
+        })
+        .where((doc) => doc != null)
+        .toList();
+
+    return allThings;
+  } catch (error) {
+    print('Error: $error');
+    if (error is FirebaseException) {
+      print('Error Code: ${error.code}');
+      print('Error Message: ${error.message}');
+    }
+    return [];
+  }
+}
+
 //GET ALL ORDERED
 Future<List<Map<String, dynamic>>> firebase_GetAllDocumentsOrdered(
     String coll, String orderField, String direction) async {
@@ -576,7 +708,6 @@ Future<String?> storage_DownloadMedia(String path) async {
   try {
     final storageRef = storage.ref();
     final url = await storageRef.child(path).getDownloadURL();
-    print("Download URL: $url");
     return url;
   } catch (e) {
     print('Error fetching download URL: $e');

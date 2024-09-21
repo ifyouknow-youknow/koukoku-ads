@@ -33,7 +33,6 @@ class _AsyncImageViewState extends State<AsyncImageView> {
   Future<void> fetchImageUrl() async {
     try {
       final url = await storage_DownloadMedia(widget.imagePath);
-      print(url);
       if (mounted) {
         // Check if the widget is still mounted before updating state
         setState(() {
