@@ -355,48 +355,47 @@ Future<List<Map<String, dynamic>?>>
   try {
     Query query = db.collection(coll);
 
-    // Apply the queries
-    // for (var queryItem in queries) {
-    //   String field = queryItem['field'];
-    //   String operator = queryItem['operator'];
-    //   dynamic value = queryItem['value'];
+    for (var queryItem in queries) {
+      String field = queryItem['field'];
+      String operator = queryItem['operator'];
+      dynamic value = queryItem['value'];
 
-    //   // Apply query operators dynamically
-    //   switch (operator) {
-    //     case '==':
-    //       query = query.where(field, isEqualTo: value);
-    //       break;
-    //     case '!=':
-    //       query = query.where(field, isNotEqualTo: value);
-    //       break;
-    //     case '<':
-    //       query = query.where(field, isLessThan: value);
-    //       break;
-    //     case '<=':
-    //       query = query.where(field, isLessThanOrEqualTo: value);
-    //       break;
-    //     case '>':
-    //       query = query.where(field, isGreaterThan: value);
-    //       break;
-    //     case '>=':
-    //       query = query.where(field, isGreaterThanOrEqualTo: value);
-    //       break;
-    //     case 'array-contains':
-    //       query = query.where(field, arrayContains: value);
-    //       break;
-    //     case 'array-contains-any':
-    //       query = query.where(field, arrayContainsAny: value);
-    //       break;
-    //     case 'in':
-    //       query = query.where(field, whereIn: value);
-    //       break;
-    //     case 'not-in':
-    //       query = query.where(field, whereNotIn: value);
-    //       break;
-    //     default:
-    //       throw ArgumentError('Invalid operator: $operator');
-    //   }
-    // }
+      // Apply query operators dynamically
+      switch (operator) {
+        case '==':
+          query = query.where(field, isEqualTo: value);
+          break;
+        case '!=':
+          query = query.where(field, isNotEqualTo: value);
+          break;
+        case '<':
+          query = query.where(field, isLessThan: value);
+          break;
+        case '<=':
+          query = query.where(field, isLessThanOrEqualTo: value);
+          break;
+        case '>':
+          query = query.where(field, isGreaterThan: value);
+          break;
+        case '>=':
+          query = query.where(field, isGreaterThanOrEqualTo: value);
+          break;
+        case 'array-contains':
+          query = query.where(field, arrayContains: value);
+          break;
+        case 'array-contains-any':
+          query = query.where(field, arrayContainsAny: value);
+          break;
+        case 'in':
+          query = query.where(field, whereIn: value);
+          break;
+        case 'not-in':
+          query = query.where(field, whereNotIn: value);
+          break;
+        default:
+          throw ArgumentError('Invalid operator: $operator');
+      }
+    }
 
     // Decode the geohash to get user's location
     var center = Geohash.decode(geohash);

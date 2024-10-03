@@ -55,6 +55,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
     // Fetch documents from Firebase
     final docs = await firebase_GetAllDocumentsQueried('KoukokuAds_Campaigns', [
       {'field': 'userId', 'operator': '==', 'value': widget.ad['userId']},
+      {'field': 'active', 'operator': '==', 'value': true}
     ]);
 
     // Categorize ads by 'chosenOption'
@@ -368,9 +369,29 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
     }
   }
 
+  void init() async {
+    if (DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
+                    11, 59, 59)
+                .millisecondsSinceEpoch >
+            widget.ad['date'] &&
+        widget.ad['expDate'] != 0 &&
+        widget.ad['active'] &&
+        widget.ad['isCoupon']) {
+      await firebase_UpdateDocument(
+          '${appName}_Campaigns', widget.ad['id'], {'active': false});
+      nav_Pop(context);
+      setState(() {
+        widget.dm.setToggleAlert(true);
+        widget.dm.setAlertTitle('Coupon Expired');
+        widget.dm.setAlertText('This coupon has expired.');
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    init();
     _fetchBusinessInfo();
     _fetchAds();
     checkIfSaved();

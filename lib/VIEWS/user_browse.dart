@@ -43,6 +43,27 @@ class _UserBrowseState extends State<UserBrowse> {
     });
 
     try {
+      // UPDATE THINGS
+      final needsUpdated = await firebase_GetAllDocumentsQueriedLimited(
+          '${appName}_Campaigns',
+          [
+            {'field': 'active', 'operator': '==', 'value': true},
+            {
+              'field': 'expDate',
+              'operator': '<',
+              'value': DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day, 11, 59, 59)
+                  .millisecondsSinceEpoch
+            },
+            {'field': 'expDate', 'operator': '!=', 'value': 0},
+            {'field': 'isCoupon', 'operator': '==', 'value': true}
+          ],
+          50);
+      for (var doc in needsUpdated) {
+        await firebase_UpdateDocument(
+            '${appName}_Campaigns', doc['id'], {'active': false});
+        print('Ad ${doc['id']} has just been updated.');
+      }
       // Fetch documents from Firebase with pagination
       final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
         '${appName}_Campaigns',

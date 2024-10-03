@@ -7,6 +7,7 @@ import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
 import 'package:koukoku_ads/FUNCTIONS/colors.dart';
+import 'package:koukoku_ads/FUNCTIONS/misc.dart';
 import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
@@ -14,6 +15,7 @@ import 'package:koukoku_ads/MODELS/firebase.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
 import 'package:koukoku_ads/VIEWS/business_profile.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class Browse extends StatefulWidget {
   final DataMaster dm;
@@ -29,9 +31,36 @@ class _BrowseState extends State<Browse> {
   bool isLoading = false;
   int limit = 4;
   bool _noMore = false;
+  List<dynamic> _seenAdIds = [];
   //
   Future<void> _fetchLocalAds() async {
+    if (isLoading) return; // Prevent multiple calls
+    setState(() {
+      isLoading = true;
+    });
+
     try {
+      // UPDATE THINGS
+      final needsUpdated = await firebase_GetAllDocumentsQueriedLimited(
+          '${appName}_Campaigns',
+          [
+            {'field': 'active', 'operator': '==', 'value': true},
+            {
+              'field': 'expDate',
+              'operator': '<',
+              'value': DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day, 11, 59, 59)
+                  .millisecondsSinceEpoch
+            },
+            {'field': 'expDate', 'operator': '!=', 'value': 0},
+            {'field': 'isCoupon', 'operator': '==', 'value': true}
+          ],
+          50);
+      for (var doc in needsUpdated) {
+        await firebase_UpdateDocument(
+            '${appName}_Campaigns', doc['id'], {'active': false});
+        print('Ad ${doc['id']} has just been updated.');
+      }
       // Fetch documents from Firebase with pagination
       final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
         '${appName}_Campaigns',
@@ -67,157 +96,132 @@ class _BrowseState extends State<Browse> {
     List<Widget> widgets = [];
 
     for (int i = 0; i < ads.length; i++) {
+      Widget adWidget; // Declare adWidget here
+
+      // Build the ad widget based on its chosen option
       if (ads[i]['chosenOption'] == '2 x 2') {
-        widgets.add(
-          PaddingView(
-            paddingTop: 5,
-            paddingBottom: 5,
-            paddingLeft: 10,
-            paddingRight: 10,
-            child: ButtonView(
-              radius: 10,
-              onPress: () {
-                nav_Push(
-                  context,
-                  BusinessProfile(dm: widget.dm, ad: ads[i]),
-                  () => setState(() {}),
-                );
-              },
-              child: AsyncImageView(
-                radius: 10,
-                imagePath: ads[i]['imagePath'],
-                width: getWidth(context),
-                height: getWidth(context),
-                objectFit: BoxFit.fill,
-              ),
-            ),
-          ),
+        adWidget = AsyncImageView(
+          radius: 10,
+          imagePath: ads[i]['imagePath'],
+          width: getWidth(context),
+          height: getWidth(context),
+          objectFit: BoxFit.fill,
         );
       } else if (ads[i]['chosenOption'] == '2 x 1') {
-        widgets.add(
-          PaddingView(
-            paddingTop: 5,
-            paddingBottom: 5,
-            paddingLeft: 10,
-            paddingRight: 10,
-            child: ButtonView(
-              radius: 10,
-              onPress: () {
-                nav_Push(
-                  context,
-                  BusinessProfile(dm: widget.dm, ad: ads[i]),
-                  () => setState(() {}),
-                );
-              },
-              child: AsyncImageView(
-                radius: 10,
-                imagePath: ads[i]['imagePath'],
-                width: getWidth(context),
-                height: getWidth(context) / 2,
-                objectFit: BoxFit.fill,
-              ),
-            ),
-          ),
+        adWidget = AsyncImageView(
+          radius: 10,
+          imagePath: ads[i]['imagePath'],
+          width: getWidth(context),
+          height: getWidth(context) / 2,
+          objectFit: BoxFit.fill,
         );
       } else if (ads[i]['chosenOption'] == '1 x 1' &&
           i + 1 < ads.length &&
           ads[i + 1]['chosenOption'] == '1 x 1') {
         // Add two consecutive '1 x 1' ads side by side
-        widgets.add(
-          PaddingView(
-            paddingTop: 5,
-            paddingBottom: 5,
-            paddingLeft: 10,
-            paddingRight: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ButtonView(
-                    onPress: () {
-                      nav_Push(context,
-                          BusinessProfile(dm: widget.dm, ad: ads[i - 1]), () {
-                        setState(() {});
-                      });
-                    },
-                    child: AsyncImageView(
-                      radius: 10,
-                      imagePath: ads[i]['imagePath'],
-                      width: getWidth(context) / 2,
-                      height: getWidth(context) / 2,
-                      objectFit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ButtonView(
-                    onPress: () {
-                      nav_Push(
-                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                          () {
-                        setState(() {});
-                      });
-                    },
-                    child: AsyncImageView(
-                      radius: 10,
-                      imagePath: ads[i + 1]['imagePath'],
-                      width: getWidth(context) / 2,
-                      height: getWidth(context) / 2,
-                      objectFit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ],
+        adWidget = Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: AsyncImageView(
+                radius: 10,
+                imagePath: ads[i]['imagePath'],
+                width: getWidth(context) / 2,
+                height: getWidth(context) / 2,
+                objectFit: BoxFit.fill,
+              ),
             ),
-          ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: AsyncImageView(
+                radius: 10,
+                imagePath: ads[i + 1]['imagePath'],
+                width: getWidth(context) / 2,
+                height: getWidth(context) / 2,
+                objectFit: BoxFit.fill,
+              ),
+            ),
+          ],
         );
         i++; // Skip the next ad as it has been processed
       } else if (ads[i]['chosenOption'] == '1 x 1') {
         // Handle a single '1 x 1' ad when no pair is available
-        widgets.add(
-          PaddingView(
+        adWidget = Row(
+          children: [
+            Expanded(
+              child: AsyncImageView(
+                radius: 10,
+                imagePath: ads[i]['imagePath'],
+                width: getWidth(context) / 2,
+                height: getWidth(context) / 2,
+                objectFit: BoxFit.fill,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ImageView(
+                radius: 10,
+                imagePath: 'assets/ad1.png',
+                width: getWidth(context) / 2,
+                height: getWidth(context) / 2,
+                objectFit: BoxFit.fill,
+              ),
+            ),
+          ],
+        );
+      } else {
+        // Fallback to an empty Container if no condition matches
+        adWidget = Container(); // Ensure adWidget is initialized
+      }
+
+      // Wrap the ad widget with VisibilityDetector
+      widgets.add(
+        VisibilityDetector(
+          key: Key('ad_${ads[i]['id']}'), // Use a unique key for each ad
+          onVisibilityChanged: (info) {
+            if (info.visibleFraction == 1) {
+              // Check if fully visible
+              if (!_seenAdIds.contains(ads[i]['id'])) {
+                onAdView(ads[i]['id']);
+              }
+            }
+          },
+          child: PaddingView(
             paddingTop: 5,
             paddingBottom: 5,
             paddingLeft: 10,
             paddingRight: 10,
-            child: Row(
-              children: [
-                Expanded(
-                  child: ButtonView(
-                    onPress: () {
-                      nav_Push(
-                          context, BusinessProfile(dm: widget.dm, ad: ads[i]),
-                          () {
-                        setState(() {});
-                      });
-                    },
-                    child: AsyncImageView(
-                      radius: 10,
-                      imagePath: ads[i]['imagePath'],
-                      width: getWidth(context) / 2,
-                      height: getWidth(context) / 2,
-                      objectFit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ImageView(
-                    radius: 10,
-                    imagePath: 'assets/ad1.png',
-                    width: getWidth(context) / 2,
-                    height: getWidth(context) / 2,
-                    objectFit: BoxFit.fill,
-                  ),
-                ),
-              ],
+            child: ButtonView(
+              radius: 10,
+              onPress: () async {
+                final success = await firebase_CreateDocument(
+                    '${appName}_Clicks',
+                    randomString(25),
+                    {'userId': widget.dm.user['id'], 'adId': ads[i]['id']});
+                if (success) {
+                  nav_Push(
+                    context,
+                    BusinessProfile(dm: widget.dm, ad: ads[i]),
+                    () => setState(() {}),
+                  );
+                }
+              },
+              child: adWidget,
             ),
           ),
-        );
-      }
+        ),
+      );
     }
     return widgets;
+  }
+
+  void onAdView(String adId) async {
+    setState(() {
+      _seenAdIds.add(adId);
+    });
+    await firebase_CreateDocument('${appName}_Views', randomString(25),
+        {'userId': widget.dm.user['id'], 'adId': adId});
+    print('the ad ${adId} was seen');
   }
 
   @override
