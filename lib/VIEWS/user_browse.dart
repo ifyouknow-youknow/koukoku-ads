@@ -64,6 +64,7 @@ class _UserBrowseState extends State<UserBrowse> {
             '${appName}_Campaigns', doc['id'], {'active': false});
         print('Ad ${doc['id']} has just been updated.');
       }
+
       // Fetch documents from Firebase with pagination
       final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
         '${appName}_Campaigns',

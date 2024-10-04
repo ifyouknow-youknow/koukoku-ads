@@ -370,6 +370,11 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
   }
 
   void init() async {
+    if (widget.ad['seenViews'] >= widget.ad['views']) {
+      await firebase_UpdateDocument(
+          '${appName}_Campaigns', widget.ad['id'], {'active': false});
+      print('Ad ${widget.ad['id']} is now inactive.');
+    }
     if (DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
                     11, 59, 59)
                 .millisecondsSinceEpoch >
