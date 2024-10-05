@@ -461,7 +461,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                     ),
                     ButtonView(
                         radius: 15,
-                        backgroundColor: hexToColor("#FF1F54"),
+                        backgroundColor: hexToColor("#3490F3"),
                         child: const PaddingView(
                           child: Icon(
                             Icons.call,
@@ -519,7 +519,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                         ),
                         ButtonView(
                             radius: 15,
-                            backgroundColor: hexToColor("#FF1F54"),
+                            backgroundColor: hexToColor("#3490F3"),
                             child: const PaddingView(
                               child: Icon(
                                 Icons.directions_car,

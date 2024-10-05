@@ -263,7 +263,7 @@ class _UserBrowseState extends State<UserBrowse> {
               ButtonView(
                 child: Icon(
                   Icons.face,
-                  color: hexToColor("#FF1F54"),
+                  color: hexToColor("#3490F3"),
                   size: 34,
                 ),
                 onPress: () {

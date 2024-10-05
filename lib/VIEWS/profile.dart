@@ -150,7 +150,7 @@ class _ProfileState extends State<Profile> {
             // FAVORITES
             BorderView(
               bottom: chosenOption == 'favorites' ? true : false,
-              bottomColor: hexToColor("#FF1F54"),
+              bottomColor: hexToColor("#3490F3"),
               bottomWidth: 3,
               child: ButtonView(
                 onPress: () {
@@ -175,7 +175,7 @@ class _ProfileState extends State<Profile> {
             // SCANS
             BorderView(
               bottom: chosenOption == 'scans' ? true : false,
-              bottomColor: hexToColor("#FF1F54"),
+              bottomColor: hexToColor("#3490F3"),
               bottomWidth: 3,
               child: ButtonView(
                 onPress: () {
@@ -199,7 +199,7 @@ class _ProfileState extends State<Profile> {
             // FOLLOWING
             BorderView(
               bottom: chosenOption == 'following' ? true : false,
-              bottomColor: hexToColor("#FF1F54"),
+              bottomColor: hexToColor("#3490F3"),
               bottomWidth: 3,
               child: ButtonView(
                 onPress: () {
@@ -316,7 +316,7 @@ class _ProfileState extends State<Profile> {
                                               text:
                                                   'expires on ${formatShortDate(DateTime.fromMillisecondsSinceEpoch(scan['ad']['expDate']))}',
                                               wrap: true,
-                                              color: hexToColor("#FF1F54"),
+                                              color: hexToColor("#3490F3"),
                                             )
                                         ],
                                       ),

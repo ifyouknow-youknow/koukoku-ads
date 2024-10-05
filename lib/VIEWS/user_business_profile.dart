@@ -450,7 +450,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                     child: Icon(
                       _isSaved ? Icons.favorite : Icons.favorite_outline,
                       size: 32,
-                      color: _isSaved ? hexToColor("#FF1F54") : Colors.black,
+                      color: _isSaved ? hexToColor("#3490F3") : Colors.black,
                     ),
                     onPress: () {
                       onSaveUnsave();
@@ -601,7 +601,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                           paddingLeft: 18,
                           paddingRight: 18,
                           radius: 100,
-                          backgroundColor: hexToColor("#FF1F54"),
+                          backgroundColor: hexToColor("#3490F3"),
                           child: TextView(
                             text: 'follow',
                             color: Colors.white,
@@ -657,7 +657,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                     ),
                     ButtonView(
                         radius: 15,
-                        backgroundColor: hexToColor("#FF1F54"),
+                        backgroundColor: hexToColor("#3490F3"),
                         child: const PaddingView(
                           child: Icon(
                             Icons.call,
@@ -715,7 +715,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                         ),
                         ButtonView(
                             radius: 15,
-                            backgroundColor: hexToColor("#FF1F54"),
+                            backgroundColor: hexToColor("#3490F3"),
                             child: const PaddingView(
                               child: Icon(
                                 Icons.directions_car,

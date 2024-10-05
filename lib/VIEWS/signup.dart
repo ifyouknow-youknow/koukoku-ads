@@ -85,7 +85,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return MainView(
-        backgroundColor: hexToColor("#FF1F54"),
+        backgroundColor: hexToColor("#4F49FF"),
         dm: widget.dm,
         children: [
           // TOP
@@ -126,159 +126,177 @@ class _SignUpState extends State<SignUp> {
           Expanded(
             child: SingleChildScrollView(
               child: PaddingView(
-                  child: RoundedCornersView(
-                backgroundColor: Colors.white,
-                child: PaddingView(
-                  paddingTop: 15,
-                  paddingBottom: 20,
-                  paddingLeft: 20,
-                  paddingRight: 20,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextView(
-                        text: 'Sign up',
-                        size: 40,
-                        weight: FontWeight.w800,
-                        spacing: -1,
-                        // color: Colors.white,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextView(
-                                  text: 'first name',
-                                  // color: Colors.white,
-                                  size: 16,
-                                  weight: FontWeight.w500,
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                TextfieldView(
-                                  controller: _firstNameController,
-                                  // color: Colors.white,
-                                  // placeholderColor: Colors.white60,
-                                  placeholder: 'ex. John',
-                                  isCap: true,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextView(
-                                  text: 'last name',
-                                  // color: Colors.white,
-                                  size: 16,
-                                  weight: FontWeight.w500,
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                TextfieldView(
-                                  controller: _lastNameController,
-                                  // color: Colors.white,
-                                  // placeholderColor: Colors.white60,
-                                  placeholder: 'ex. Doe',
-                                  isCap: true,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      // EMAIL
-                      Column(
+                children: [
+                  RoundedCornersView(
+                    topLeft: 20,
+                    topRight: 20,
+                    bottomLeft: 20,
+                    bottomRight: 20,
+                    backgroundColor: Colors.white,
+                    child: PaddingView(
+                      paddingTop: 15,
+                      paddingBottom: 20,
+                      paddingLeft: 20,
+                      paddingRight: 20,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextView(
-                            text: 'email',
+                            text: 'Sign up',
+                            size: 40,
+                            weight: FontWeight.w800,
+                            spacing: -1,
                             // color: Colors.white,
-                            size: 16,
-                            weight: FontWeight.w500,
                           ),
                           SizedBox(
-                            height: 4,
+                            height: 10,
                           ),
-                          TextfieldView(
-                            controller: _emailController,
-                            // color: Colors.white,
-                            // placeholderColor: Colors.white60,
-                            placeholder: 'ex. jdoe@gmail.com',
-                            keyboardType: TextInputType.emailAddress,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextView(
+                                      text: 'first name',
+                                      // color: Colors.white,
+                                      size: 16,
+                                      weight: FontWeight.w500,
+                                    ),
+                                    SizedBox(
+                                      height: 4,
+                                    ),
+                                    TextfieldView(
+                                      controller: _firstNameController,
+                                      // color: Colors.white,
+                                      // placeholderColor: Colors.white60,
+                                      placeholder: 'ex. John',
+                                      isCap: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextView(
+                                      text: 'last name',
+                                      // color: Colors.white,
+                                      size: 16,
+                                      weight: FontWeight.w500,
+                                    ),
+                                    SizedBox(
+                                      height: 4,
+                                    ),
+                                    TextfieldView(
+                                      controller: _lastNameController,
+                                      // color: Colors.white,
+                                      // placeholderColor: Colors.white60,
+                                      placeholder: 'ex. Doe',
+                                      isCap: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          // EMAIL
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextView(
+                                text: 'email',
+                                // color: Colors.white,
+                                size: 16,
+                                weight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              TextfieldView(
+                                controller: _emailController,
+                                // color: Colors.white,
+                                // placeholderColor: Colors.white60,
+                                placeholder: 'ex. jdoe@gmail.com',
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                            ],
+                          ),
 
-                      SizedBox(
-                        height: 10,
-                      ),
-                      // PASSWORD
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextView(
-                            text: 'password',
-                            // color: Colors.white,
-                            size: 16,
-                            weight: FontWeight.w500,
-                          ),
                           SizedBox(
-                            height: 4,
+                            height: 10,
                           ),
-                          TextfieldView(
-                            controller: _passwordController,
-                            // color: Colors.white,
-                            // placeholderColor: Colors.white60,
-                            placeholder: '8 characters minimum',
-                            keyboardType: TextInputType.emailAddress,
+                          // PASSWORD
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextView(
+                                text: 'password',
+                                // color: Colors.white,
+                                size: 16,
+                                weight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              TextfieldView(
+                                controller: _passwordController,
+                                // color: Colors.white,
+                                // placeholderColor: Colors.white60,
+                                placeholder: '8 characters minimum',
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
 
-                      SizedBox(
-                        height: 10,
-                      ),
-                      // CONFIRM
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextView(
-                            text: 'confirm password',
-                            // color: Colors.white,
-                            size: 16,
-                            weight: FontWeight.w500,
-                          ),
                           SizedBox(
-                            height: 4,
+                            height: 10,
                           ),
-                          TextfieldView(
-                            controller: _confirmPasswordController,
-                            // color: Colors.white,
-                            // placeholderColor: Colors.white60,
-                            placeholder: 'passwords must match',
-                            keyboardType: TextInputType.emailAddress,
+                          // CONFIRM
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextView(
+                                text: 'confirm password',
+                                // color: Colors.white,
+                                size: 16,
+                                weight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              TextfieldView(
+                                controller: _confirmPasswordController,
+                                // color: Colors.white,
+                                // placeholderColor: Colors.white60,
+                                placeholder: 'passwords must match',
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextView(
+                    text:
+                        'Say goodbye to ineffective bots and costly ads! Your ads deserve to be seen where they truly matter. Place them where they will be noticed and appreciated, ensuring they reach the right audience.',
+                    size: 16,
+                    color: Colors.white,
+                    weight: FontWeight.w500,
+                  )
+                ],
               )),
             ),
           ),
