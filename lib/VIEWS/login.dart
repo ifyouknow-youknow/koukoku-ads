@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return MainView(
-      backgroundColor: hexToColor("#4F49FF"),
+      backgroundColor: hexToColor("#4D76FF"),
       dm: widget.dm,
       children: [
         Expanded(
