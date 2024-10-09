@@ -11,6 +11,7 @@ import 'package:koukoku_ads/FUNCTIONS/misc.dart';
 import 'package:koukoku_ads/FUNCTIONS/server.dart';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/geohash.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
@@ -50,11 +51,20 @@ Future<User?> auth_CheckUser() async {
   try {
     // Check if user is authenticated
     final user = await auth.authStateChanges().first;
-    return user!;
+    if (user != null) {
+      final doc = await firebase_GetDocument('${appName}_Users', user.uid);
+      if (doc.isNotEmpty) {
+        return user;
+      } else {
+        await auth_SignOut();
+        return null;
+      }
+    }
   } catch (e) {
     print('Error: $e');
     return null;
   }
+  return null;
 }
 
 //VERIFY EMAIL

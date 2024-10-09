@@ -66,10 +66,11 @@ class _LoginState extends State<Login> {
       });
       nav_PushAndRemove(context, UserBrowse(dm: widget.dm));
       return;
+    } else {
+      setState(() {
+        widget.dm.setToggleLoading(false);
+      });
     }
-    setState(() {
-      widget.dm.setToggleLoading(false);
-    });
   }
 
   @override

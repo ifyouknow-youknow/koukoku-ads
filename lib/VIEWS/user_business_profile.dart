@@ -17,6 +17,7 @@ import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
+import 'package:koukoku_ads/MODELS/geohash.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
 import 'package:koukoku_ads/VIEWS/user_browse.dart';
@@ -38,6 +39,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
   String _savedId = "";
   bool _isFollowing = false;
   String _followId = "";
+  LatLng _location = LatLng(0, 0);
 
   void _fetchBusinessInfo() async {
     final doc = await firebase_GetDocument(
@@ -259,6 +261,13 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
         );
       }
     }
+    if (ads.length == 0) {
+      widgets.add(ImageView(
+        imagePath: 'assets/nomore.png',
+        width: 200,
+        height: 100,
+      ));
+    }
     return widgets;
   }
 
@@ -391,6 +400,10 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
         widget.dm.setAlertText('This coupon has expired.');
       });
     }
+    final encoded = Geohash.decode(widget.ad['geohash']);
+    setState(() {
+      _location = LatLng(encoded['latitude']!, encoded['longitude']!);
+    });
   }
 
   @override
@@ -618,130 +631,79 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
               // INFO
               // PHONE
               PaddingView(
-                paddingTop: 0,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: RoundedCornersView(
-                        topLeft: 15,
-                        topRight: 15,
-                        bottomLeft: 15,
-                        bottomRight: 15,
-                        backgroundColor: hexToColor("#F8FAFB"),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: PaddingView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const TextView(
-                                  text: 'phone',
-                                  size: 14,
-                                  color: Colors.black54,
-                                ),
-                                TextView(
-                                  text: businessInfo?['phone'] ?? 'loading...',
-                                  weight: FontWeight.w600,
-                                  size: 16,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    // PHONE
                     ButtonView(
-                        radius: 15,
-                        backgroundColor: hexToColor("#3490F3"),
-                        child: const PaddingView(
-                          child: Icon(
-                            Icons.call,
-                            color: Colors.white,
-                            size: 22,
+                        radius: 100,
+                        backgroundColor: hexToColor('#E9F1FA'),
+                        child: PaddingView(
+                          paddingLeft: 20,
+                          paddingRight: 20,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextView(
+                                text: 'Call',
+                                size: 20,
+                                weight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(Icons.call)
+                            ],
                           ),
                         ),
                         onPress: () async {
                           await callPhoneNumber(businessInfo?['phone']);
-                        })
-                  ],
-                ),
-              ),
-              // ADDRESS
-              PaddingView(
-                paddingTop: 0,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: RoundedCornersView(
-                            topLeft: 15,
-                            topRight: 15,
-                            bottomLeft: 15,
-                            bottomRight: 15,
-                            backgroundColor: hexToColor("#F8FAFB"),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: PaddingView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const TextView(
-                                      text: 'address',
-                                      size: 14,
-                                      color: Colors.black54,
-                                    ),
-                                    TextView(
-                                      text: businessInfo?['address'] ??
-                                          'loading..',
-                                      weight: FontWeight.w600,
-                                      size: 16,
-                                    )
-                                  ],
+                        }),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    // ADDRESS
+                    Expanded(
+                      child: ButtonView(
+                          radius: 100,
+                          backgroundColor: hexToColor('#4D76FF'),
+                          child: PaddingView(
+                            paddingLeft: 20,
+                            paddingRight: 20,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextView(
+                                  text: 'Directions',
+                                  size: 20,
+                                  weight: FontWeight.w500,
+                                  color: Colors.white,
                                 ),
-                              ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.directions_car,
+                                  color: Colors.white,
+                                )
+                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ButtonView(
-                            radius: 15,
-                            backgroundColor: hexToColor("#3490F3"),
-                            child: const PaddingView(
-                              child: Icon(
-                                Icons.directions_car,
-                                color: Colors.white,
-                                size: 22,
-                              ),
-                            ),
-                            onPress: () {
-                              getDirections(LatLng(
-                                  businessInfo?['location']['latitude'],
-                                  businessInfo?['location']['longitude']));
-                            })
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MapView(height: 140, locations: [
-                      LatLng(businessInfo?['location']['latitude'],
-                          businessInfo?['location']['longitude'])
-                    ]),
-                    const Divider(
-                      color: Colors.black12,
+                          onPress: () async {
+                            await getDirections(_location);
+                          }),
                     )
                   ],
                 ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MapView(height: 140, locations: [_location]),
+              // const Divider(
+              //   color: Colors.black12,
+              // ),
+              SizedBox(
+                height: 10,
               ),
               // ADS
               const PaddingView(
@@ -759,7 +721,6 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                   ],
                 ),
               ),
-
               ...buildAdWidgets(context, ads),
 
               const SizedBox(

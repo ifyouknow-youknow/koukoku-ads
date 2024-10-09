@@ -419,6 +419,9 @@ class _ProfileState extends State<Profile> {
 
       //
       PaddingView(
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 20,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -461,8 +464,8 @@ class _ProfileState extends State<Profile> {
             ),
             ImageView(
               imagePath: 'assets/ilove.png',
-              width: getWidth(context) * 0.3,
-              height: getWidth(context) * 0.2,
+              width: getWidth(context) * 0.4,
+              height: getWidth(context) * 0.3,
               objectFit: BoxFit.contain,
             ),
           ],

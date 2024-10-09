@@ -13,6 +13,7 @@ import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
+import 'package:koukoku_ads/VIEWS/filters.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
 import 'package:koukoku_ads/VIEWS/profile.dart';
@@ -260,15 +261,32 @@ class _UserBrowseState extends State<UserBrowse> {
                   ),
                 ],
               ),
-              ButtonView(
-                child: Icon(
-                  Icons.face,
-                  color: hexToColor("#3490F3"),
-                  size: 34,
-                ),
-                onPress: () {
-                  nav_Push(context, Profile(dm: widget.dm));
-                },
+              Row(
+                children: [
+                  ButtonView(
+                    child: Icon(
+                      Icons.tune_outlined,
+                      size: 34,
+                      color: hexToColor('#353841'),
+                    ),
+                    onPress: () {
+                      nav_Push(context, Filters(dm: widget.dm));
+                    },
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  ButtonView(
+                    child: Icon(
+                      Icons.face,
+                      color: hexToColor("#3490F3"),
+                      size: 34,
+                    ),
+                    onPress: () {
+                      nav_Push(context, Profile(dm: widget.dm));
+                    },
+                  ),
+                ],
               ),
             ],
           ),
