@@ -4,6 +4,7 @@ class SliderView extends StatefulWidget {
   final double min;
   final double max;
   final double increment;
+  final double start;
   final void Function(double)? onChange;
   final Color color;
 
@@ -12,6 +13,7 @@ class SliderView extends StatefulWidget {
       required this.min,
       required this.max,
       required this.increment,
+      required this.start,
       this.onChange,
       this.color = Colors.black});
 
@@ -25,8 +27,8 @@ class _SliderViewState extends State<SliderView> {
   @override
   void initState() {
     super.initState();
-    // Initialize the current value to the minimum value
-    _currentValue = widget.min;
+    // Initialize the current value to the start value provided
+    _currentValue = widget.start;
   }
 
   @override

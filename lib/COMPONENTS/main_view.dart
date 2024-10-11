@@ -4,6 +4,7 @@ import 'package:koukoku_ads/COMPONENTS/bubble_view.dart';
 import 'package:koukoku_ads/COMPONENTS/button_view.dart';
 import 'package:koukoku_ads/COMPONENTS/loading_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
 
@@ -43,7 +44,14 @@ class _MainViewState extends State<MainView> {
             ),
 
             // ABSOLUTE
-            if (widget.dm.toggleBubble) const BubbleView(),
+            if (widget.dm.toggleBubble)
+              BubbleView(
+                backgroundColor: hexToColor('#2DD445'),
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                icon: Icons.check,
+                text: widget.dm.bubbleText,
+              ),
             if (widget.dm.toggleAlert)
               AlertView(
                 title: widget.dm.alertTitle,

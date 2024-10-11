@@ -12,8 +12,8 @@ class DataMaster with _DataMasterToggles, _DataMasterStrings, _DataMasterLists {
   Map<String, dynamic> get user => _user;
   void setUser(Map<String, dynamic> value) => _user = value;
   //
-  LatLng _myLocation = const LatLng(0, 0);
-  LatLng get myLocation => _myLocation;
+  LatLng? _myLocation;
+  LatLng? get myLocation => _myLocation;
   void setMyLocation(LatLng value) => _myLocation = value;
   //
 

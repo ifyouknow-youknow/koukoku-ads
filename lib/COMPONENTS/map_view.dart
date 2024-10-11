@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/textfield_view.dart';
+import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
@@ -146,7 +147,11 @@ class _MapViewState extends State<MapView> {
             paddingBottom: 10,
             child: Row(
               children: [
-                Expanded(child: TextfieldView(controller: _searchController)),
+                Expanded(
+                    child: TextfieldView(
+                  controller: _searchController,
+                  backgroundColor: hexToColor('#F6F8FA'),
+                )),
                 IconButton(
                   icon: const Icon(Icons.search, size: 30),
                   onPressed: () {

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
 import 'package:koukoku_ads/COMPONENTS/button_view.dart';
 import 'package:koukoku_ads/COMPONENTS/future_view.dart';
@@ -8,11 +11,13 @@ import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
 import 'package:koukoku_ads/FUNCTIONS/colors.dart';
+import 'package:koukoku_ads/FUNCTIONS/location.dart';
 import 'package:koukoku_ads/FUNCTIONS/misc.dart';
 import 'package:koukoku_ads/FUNCTIONS/nav.dart';
 import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
 import 'package:koukoku_ads/MODELS/constants.dart';
 import 'package:koukoku_ads/MODELS/firebase.dart';
+import 'package:koukoku_ads/MODELS/geohash.dart';
 import 'package:koukoku_ads/VIEWS/filters.dart';
 import 'package:koukoku_ads/VIEWS/login.dart';
 import 'package:koukoku_ads/MODELS/screen.dart';
@@ -33,16 +38,14 @@ class _UserBrowseState extends State<UserBrowse> {
   dynamic lastDoc;
   List<dynamic> ads = [];
   bool isLoading = false;
-  int limit = 4;
+  int limit = 60;
   bool _noMore = false;
   List<dynamic> _seenAdIds = [];
 
   Future<void> _fetchLocalAds() async {
-    if (isLoading) return; // Prevent multiple calls
-    setState(() {
-      isLoading = true;
-    });
-
+    if (lastDoc == null) {
+      ads = [];
+    }
     try {
       // UPDATE THINGS
       final needsUpdated = await firebase_GetAllDocumentsQueriedLimited(
@@ -67,14 +70,31 @@ class _UserBrowseState extends State<UserBrowse> {
       }
 
       // Fetch documents from Firebase with pagination
-      final docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
+      var docs;
+      List<Map<String, dynamic>> filters = [
+        {'field': 'active', 'operator': '==', 'value': true},
+      ];
+
+      if (widget.dm.user['category'] != null &&
+          widget.dm.user['category'] != '') {
+        filters.add({
+          'field': 'category',
+          'operator': '==',
+          'value': widget.dm.user['category'],
+        });
+      }
+
+      print(filters);
+
+      // Ensure the distance is a double
+      final distance = (widget.dm.user['distance'] ?? 30).toDouble();
+
+      docs = await firebase_GetAllDocumentsQueriedLimitedDistanced(
         '${appName}_Campaigns',
-        [
-          {'field': 'active', 'operator': '==', 'value': true},
-        ],
+        filters,
         limit,
-        geohash: '9mu9zms751',
-        distance: 10,
+        geohash: widget.dm.user['geohash'],
+        distance: distance,
         lastDoc: lastDoc,
       );
 
@@ -217,6 +237,20 @@ class _UserBrowseState extends State<UserBrowse> {
         ),
       );
     }
+    if (ads.length == 0) {
+      widgets.add(Center(
+        child: PaddingView(
+          paddingTop: 20,
+          paddingBottom: 20,
+          paddingLeft: 20,
+          paddingRight: 20,
+          child: TextView(
+            text: 'Change your filters to expand and see what else is around.',
+            size: 18,
+          ),
+        ),
+      ));
+    }
     return widgets;
   }
 
@@ -229,9 +263,34 @@ class _UserBrowseState extends State<UserBrowse> {
     print('the ad ${adId} was seen');
   }
 
+  void init() async {
+    if (widget.dm.user['geohash'] == null) {
+      final loc = await getLocation(context);
+      if (loc != null) {
+        final geohash = Geohash.encode(loc.latitude, loc.longitude);
+        final succ = await firebase_UpdateDocument(
+            '${appName}_Users', widget.dm.user['id'], {'geohash': geohash});
+        if (succ) {
+          setState(() {
+            widget.dm.setMyLocation(LatLng(loc.latitude, loc.longitude));
+            widget.dm.setUser({...widget.dm.user, 'geohash': geohash});
+          });
+        }
+      }
+    } else {
+      final coords = Geohash.decode(widget.dm.user['geohash']);
+      setState(() {
+        widget.dm
+            .setMyLocation(LatLng(coords['latitude']!, coords['longitude']!));
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    init();
     _fetchLocalAds(); // Fetch ads on initialization
   }
 
@@ -270,7 +329,10 @@ class _UserBrowseState extends State<UserBrowse> {
                       color: hexToColor('#353841'),
                     ),
                     onPress: () {
-                      nav_Push(context, Filters(dm: widget.dm));
+                      nav_Push(context, Filters(dm: widget.dm), () {
+                        lastDoc = null;
+                        _fetchLocalAds();
+                      });
                     },
                   ),
                   SizedBox(
@@ -283,7 +345,9 @@ class _UserBrowseState extends State<UserBrowse> {
                       size: 34,
                     ),
                     onPress: () {
-                      nav_Push(context, Profile(dm: widget.dm));
+                      nav_Push(context, Profile(dm: widget.dm), () {
+                        setState(() {});
+                      });
                     },
                   ),
                 ],
@@ -291,54 +355,116 @@ class _UserBrowseState extends State<UserBrowse> {
             ],
           ),
         ),
-        Expanded(
-          child: SingleChildScrollView(
+        //
+        if (widget.dm.myLocation != null)
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Column(
+                    children: buildAdWidgets(context, ads),
+                  ),
+                  if (_noMore)
+                    ImageView(
+                      imagePath: 'assets/nomore.png',
+                      width: getWidth(context) * 0.8,
+                      height: getWidth(context) * 0.6,
+                      objectFit: BoxFit.contain,
+                    ),
+                  if (!_noMore)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        PaddingView(
+                          child: ButtonView(
+                              child: Row(
+                                children: [
+                                  TextView(
+                                    text: 'see more',
+                                    size: 20,
+                                    weight: FontWeight.w500,
+                                    spacing: -1,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(
+                                    Icons.waving_hand_outlined,
+                                    size: 24,
+                                    color: hexToColor("#3490F3"),
+                                  )
+                                ],
+                              ),
+                              onPress: () {
+                                _fetchLocalAds();
+                              }),
+                        ),
+                      ],
+                    )
+                ],
+              ),
+            ),
+          )
+        else
+          PaddingView(
+            paddingLeft: 20,
+            paddingRight: 20,
             child: Column(
               children: [
-                Column(
-                  children: buildAdWidgets(context, ads),
+                TextView(
+                  text:
+                      'Enable your location or set a location in your filters to view ads.',
+                  size: 16,
+                  wrap: true,
+                  isTypewriter: true,
                 ),
-                if (_noMore)
-                  ImageView(
-                    imagePath: 'assets/nomore.png',
-                    width: getWidth(context) * 0.8,
-                    height: getWidth(context) * 0.6,
-                    objectFit: BoxFit.contain,
-                  ),
-                if (!_noMore)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      PaddingView(
-                        child: ButtonView(
-                            child: Row(
-                              children: [
-                                TextView(
-                                  text: 'see more',
-                                  size: 20,
-                                  weight: FontWeight.w500,
-                                  spacing: -1,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.waving_hand_outlined,
-                                  size: 24,
-                                  color: hexToColor("#3490F3"),
-                                )
-                              ],
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonView(
+                        paddingTop: 8,
+                        paddingBottom: 8,
+                        paddingLeft: 18,
+                        paddingRight: 18,
+                        radius: 100,
+                        backgroundColor: hexToColor('#3490F3'),
+                        child: Row(
+                          children: [
+                            TextView(
+                              text: 'Get Location',
+                              size: 16,
+                              weight: FontWeight.w600,
+                              color: Colors.white,
                             ),
-                            onPress: () {
-                              _fetchLocalAds();
-                            }),
-                      ),
-                    ],
-                  )
+                            Icon(Icons.location_on,
+                                size: 26, color: Colors.white)
+                          ],
+                        ),
+                        onPress: () async {
+                          final loc = await getLocation(context);
+                          if (loc != null) {
+                            final geohash =
+                                Geohash.encode(loc.latitude, loc.longitude);
+                            final succ = await firebase_CreateDocument(
+                                '${geohash}_Users',
+                                widget.dm.user['id'],
+                                {'geohash': geohash});
+                            if (succ) {
+                              setState(() {
+                                widget.dm.setMyLocation(
+                                    LatLng(loc.latitude, loc.longitude));
+                              });
+                            }
+                          }
+                        }),
+                  ],
+                )
               ],
             ),
-          ),
-        ),
+          )
       ],
     );
   }

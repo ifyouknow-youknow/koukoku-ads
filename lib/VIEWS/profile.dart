@@ -101,7 +101,8 @@ class _ProfileState extends State<Profile> {
       final ads = await firebase_GetAllDocumentsQueriedLimited(
           '${appName}_Campaigns',
           [
-            {'field': 'userId', 'operator': '==', 'value': busId}
+            {'field': 'userId', 'operator': '==', 'value': busId},
+            {'field': 'active', 'operator': '==', 'value': true}
           ],
           4);
       final obj = {'id': busId, 'name': bus['businessName'], 'ads': ads};
