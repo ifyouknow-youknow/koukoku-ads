@@ -387,7 +387,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
     if (DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
                     11, 59, 59)
                 .millisecondsSinceEpoch >
-            widget.ad['date'] &&
+            widget.ad['expDate'] &&
         widget.ad['expDate'] != 0 &&
         widget.ad['active'] &&
         widget.ad['isCoupon']) {
@@ -551,7 +551,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                               children: [
                                 TextView(
                                   text:
-                                      'coupon expires on ${formatDate(DateTime.fromMillisecondsSinceEpoch(widget.ad['date']))}',
+                                      'coupon expires on ${formatDate(DateTime.fromMillisecondsSinceEpoch(widget.ad['expDate']))}',
                                   size: 14,
                                   weight: FontWeight.w500,
                                 ),
@@ -596,7 +596,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                           paddingLeft: 18,
                           paddingRight: 18,
                           radius: 100,
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: hexToColor('#F2F3F5'),
                           child: TextView(
                             text: 'following',
                             color: Colors.black,

@@ -10,6 +10,7 @@ import 'package:koukoku_ads/COMPONENTS/main_view.dart';
 import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
 import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
 import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:koukoku_ads/FUNCTIONS/array.dart';
 import 'package:koukoku_ads/FUNCTIONS/colors.dart';
 import 'package:koukoku_ads/FUNCTIONS/location.dart';
 import 'package:koukoku_ads/FUNCTIONS/misc.dart';
@@ -84,8 +85,6 @@ class _UserBrowseState extends State<UserBrowse> {
         });
       }
 
-      print(filters);
-
       // Ensure the distance is a double
       final distance = (widget.dm.user['distance'] ?? 30).toDouble();
 
@@ -117,8 +116,10 @@ class _UserBrowseState extends State<UserBrowse> {
     }
   }
 
-  List<Widget> buildAdWidgets(BuildContext context, List<dynamic> ads) {
+  List<Widget> buildAdWidgets(BuildContext context, List<dynamic> theseAds) {
     List<Widget> widgets = [];
+    List<dynamic> ads =
+        removeDupesByProperty(theseAds.cast<Map<String, dynamic>>(), 'id');
 
     for (int i = 0; i < ads.length; i++) {
       Widget adWidget; // Declare adWidget here
