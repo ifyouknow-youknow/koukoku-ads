@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/image_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/map_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/qrcode_view.dart';
-import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/date.dart';
-import 'package:koukoku_ads/FUNCTIONS/location.dart';
-import 'package:koukoku_ads/FUNCTIONS/misc.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/geohash.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/login.dart';
+import 'package:ads_mahem/COMPONENTS/asyncimage_view.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/map_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/qrcode_view.dart';
+import 'package:ads_mahem/COMPONENTS/roundedcorners_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/date.dart';
+import 'package:ads_mahem/FUNCTIONS/location.dart';
+import 'package:ads_mahem/FUNCTIONS/misc.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/geohash.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
+import 'package:ads_mahem/VIEWS/login.dart';
 
 class BusinessProfile extends StatefulWidget {
   final DataMaster dm;
@@ -50,7 +51,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     var twoByTwo = [];
 
     // Fetch documents from Firebase
-    final docs = await firebase_GetAllDocumentsQueried('KoukokuAds_Campaigns', [
+    final docs = await firebase_GetAllDocumentsQueried('AdsMahem_Campaigns', [
       {'field': 'userId', 'operator': '==', 'value': widget.ad['userId']},
       {'field': 'active', 'operator': '==', 'value': true}
     ]);
@@ -274,7 +275,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     if (DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
                     11, 59, 59)
                 .millisecondsSinceEpoch >
-            widget.ad['date'] &&
+            widget.ad['expDate'] &&
         widget.ad['expDate'] != 0 &&
         widget.ad['active'] &&
         widget.ad['isCoupon']) {
@@ -305,21 +306,24 @@ class _BusinessProfileState extends State<BusinessProfile> {
         child: Row(
           children: [
             ButtonView(
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_back,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    TextView(
-                      text: 'back',
-                      size: 18,
-                      weight: FontWeight.w500,
-                    ),
-                  ],
+                child: PillView(
+                  backgroundColor: hexToColor("#F5F5FC"),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.arrow_back,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      TextView(
+                        text: 'back',
+                        size: 16,
+                        weight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
                 ),
                 onPress: () {
                   nav_Pop(context);
@@ -395,7 +399,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                               children: [
                                 TextView(
                                   text:
-                                      'coupon expires on ${formatDate(DateTime.fromMillisecondsSinceEpoch(widget.ad['date']))}',
+                                      'coupon expires on ${formatDate(DateTime.fromMillisecondsSinceEpoch(widget.ad['expDate']))}',
                                   size: 14,
                                   weight: FontWeight.w500,
                                 ),
@@ -415,119 +419,125 @@ class _BusinessProfileState extends State<BusinessProfile> {
               const Divider(
                 color: Colors.black12,
               ),
-              // TITLE
-              PaddingView(
-                paddingTop: 0,
-                paddingBottom: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+              Container(
+                color: Colors.white,
+                child: Column(
                   children: [
-                    TextView(
-                      text: businessInfo?['name'],
-                      size: 32,
-                      weight: FontWeight.w800,
-                      spacing: -1,
-                      wrap: true,
+                    // TITLE
+                    PaddingView(
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextView(
+                            text: businessInfo?['name'],
+                            size: 32,
+                            weight: FontWeight.w800,
+                            spacing: -1,
+                            wrap: true,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
 // INFO
-              // PHONE
-              PaddingView(
-                child: Row(
-                  children: [
                     // PHONE
-                    ButtonView(
-                        radius: 100,
-                        backgroundColor: hexToColor('#E9F1FA'),
-                        child: PaddingView(
-                          paddingLeft: 20,
-                          paddingRight: 20,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TextView(
-                                text: 'Call',
-                                size: 20,
-                                weight: FontWeight.w500,
+                    PaddingView(
+                      child: Row(
+                        children: [
+                          // PHONE
+                          ButtonView(
+                              radius: 100,
+                              backgroundColor: hexToColor('#E9F1FA'),
+                              child: PaddingView(
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextView(
+                                      text: 'Call',
+                                      size: 20,
+                                      weight: FontWeight.w500,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Icon(Icons.call)
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(Icons.call)
-                            ],
+                              onPress: () async {
+                                await callPhoneNumber(businessInfo?['phone']);
+                              }),
+                          SizedBox(
+                            width: 10,
                           ),
-                        ),
-                        onPress: () async {
-                          await callPhoneNumber(businessInfo?['phone']);
-                        }),
+                          // ADDRESS
+                          Expanded(
+                            child: ButtonView(
+                                radius: 100,
+                                backgroundColor: hexToColor('#4D76FF'),
+                                child: PaddingView(
+                                  paddingLeft: 20,
+                                  paddingRight: 20,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextView(
+                                        text: 'Directions',
+                                        size: 20,
+                                        weight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Icon(
+                                        Icons.directions_car,
+                                        color: Colors.white,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onPress: () async {
+                                  await getDirections(_location);
+                                }),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MapView(height: 140, locations: [_location]),
+                    // const Divider(
+                    //   color: Colors.black12,
+                    // ),
                     SizedBox(
-                      width: 10,
+                      height: 10,
                     ),
-                    // ADDRESS
-                    Expanded(
-                      child: ButtonView(
-                          radius: 100,
-                          backgroundColor: hexToColor('#4D76FF'),
-                          child: PaddingView(
-                            paddingLeft: 20,
-                            paddingRight: 20,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                TextView(
-                                  text: 'Directions',
-                                  size: 20,
-                                  weight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.directions_car,
-                                  color: Colors.white,
-                                )
-                              ],
-                            ),
+                    // ADS
+                    const PaddingView(
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextView(
+                            text: 'other ads',
+                            weight: FontWeight.w600,
+                            size: 18,
+                            color: Colors.black54,
                           ),
-                          onPress: () async {
-                            await getDirections(_location);
-                          }),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              MapView(height: 140, locations: [_location]),
-              // const Divider(
-              //   color: Colors.black12,
-              // ),
-              SizedBox(
-                height: 10,
-              ),
-              // ADS
-              const PaddingView(
-                paddingTop: 0,
-                paddingBottom: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    TextView(
-                      text: 'other ads',
-                      weight: FontWeight.w600,
-                      size: 18,
-                      color: Colors.black54,
+                        ],
+                      ),
                     ),
+
+                    ...buildAdWidgets(context, ads),
                   ],
                 ),
               ),
-
-              ...buildAdWidgets(context, ads),
-
               const SizedBox(
                 height: 30,
               )

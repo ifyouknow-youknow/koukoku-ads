@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
-import 'package:koukoku_ads/COMPONENTS/border_view.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/future_view.dart';
-import 'package:koukoku_ads/COMPONENTS/image_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/date.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/login.dart';
-import 'package:koukoku_ads/VIEWS/user_business_profile.dart';
+import 'package:ads_mahem/COMPONENTS/asyncimage_view.dart';
+import 'package:ads_mahem/COMPONENTS/border_view.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/future_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/roundedcorners_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/date.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
+import 'package:ads_mahem/VIEWS/login.dart';
+import 'package:ads_mahem/VIEWS/user_business_profile.dart';
 
 class Profile extends StatefulWidget {
   final DataMaster dm;
@@ -120,23 +121,27 @@ class _ProfileState extends State<Profile> {
           child: Row(
         children: [
           ButtonView(
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  // color: Colors.white,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                TextView(
-                  text: 'browse',
-                  // color: Colors.white,
-                  size: 20,
-                  weight: FontWeight.w600,
-                  wrap: false,
-                ),
-              ],
+            child: PillView(
+              backgroundColor: hexToColor("#F5F5FC"),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back,
+                    size: 18,
+                    // color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  TextView(
+                    text: 'browse',
+                    // color: Colors.white,
+                    size: 16,
+                    weight: FontWeight.w600,
+                    wrap: false,
+                  ),
+                ],
+              ),
             ),
             onPress: () {
               nav_Pop(context);
@@ -426,48 +431,56 @@ class _ProfileState extends State<Profile> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              children: [
-                ButtonView(
-                    child: Row(
-                      children: [
-                        TextView(
-                          text: 'sign out',
-                          color: Colors.red,
-                          size: 18,
-                          weight: FontWeight.w500,
+            RoundedCornersView(
+              backgroundColor: hexToColor("#F5F5FC"),
+              topLeft: 20,
+              bottomRight: 6,
+              bottomLeft: 6,
+              topRight: 6,
+              child: PaddingView(
+                paddingLeft: 25,
+                paddingRight: 25,
+                paddingTop: 15,
+                paddingBottom: 15,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ButtonView(
+                        child: Row(
+                          children: [
+                            TextView(
+                              text: 'sign out',
+                              color: Colors.red,
+                              size: 20,
+                              weight: FontWeight.w600,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.logout_outlined,
+                              color: Colors.red,
+                              size: 22,
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.logout_outlined,
-                          color: Colors.red,
-                          size: 22,
-                        )
-                      ],
+                        onPress: () {
+                          onSignOut();
+                        }),
+                    SizedBox(
+                      height: 14,
                     ),
-                    onPress: () {
-                      onSignOut();
-                    }),
-                SizedBox(
-                  height: 8,
+                    ButtonView(
+                        child: TextView(
+                          text: 'delete account',
+                          color: Colors.black45,
+                        ),
+                        onPress: () {
+                          onDeleteAccount();
+                        })
+                  ],
                 ),
-                ButtonView(
-                    child: TextView(
-                      text: 'delete account',
-                      color: Colors.black45,
-                    ),
-                    onPress: () {
-                      onDeleteAccount();
-                    })
-              ],
-            ),
-            ImageView(
-              imagePath: 'assets/ilove.png',
-              width: getWidth(context) * 0.4,
-              height: getWidth(context) * 0.3,
-              objectFit: BoxFit.contain,
+              ),
             ),
           ],
         ),

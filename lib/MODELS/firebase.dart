@@ -6,13 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:koukoku_ads/FUNCTIONS/location.dart';
-import 'package:koukoku_ads/FUNCTIONS/misc.dart';
-import 'package:koukoku_ads/FUNCTIONS/server.dart';
+import 'package:ads_mahem/FUNCTIONS/location.dart';
+import 'package:ads_mahem/FUNCTIONS/misc.dart';
+import 'package:ads_mahem/FUNCTIONS/server.dart';
 
 import 'package:geolocator/geolocator.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/geohash.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/geohash.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 FirebaseAuth auth = FirebaseAuth.instance;

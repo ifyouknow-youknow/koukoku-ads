@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/MODELS/geohash.dart';
+import 'package:ads_mahem/MODELS/geohash.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<Position?> getLocation(BuildContext context) async {

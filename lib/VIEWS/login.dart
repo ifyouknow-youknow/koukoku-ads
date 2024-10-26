@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/image_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/COMPONENTS/textfield_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/browse.dart';
-import 'package:koukoku_ads/VIEWS/signup.dart';
-import 'package:koukoku_ads/VIEWS/user_browse.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/COMPONENTS/textfield_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
+import 'package:ads_mahem/VIEWS/browse.dart';
+import 'package:ads_mahem/VIEWS/signup.dart';
+import 'package:ads_mahem/VIEWS/user_browse.dart';
 
 class Login extends StatefulWidget {
   final DataMaster dm;
@@ -42,11 +43,14 @@ class _LoginState extends State<Login> {
     });
     final user = await auth_SignIn(email, pass);
     if (user != null) {
-      setState(() {
-        widget.dm.setToggleLoading(false);
-      });
-      // GO SOMEWHERE
-      nav_PushAndRemove(context, UserBrowse(dm: widget.dm));
+      final signedIn = await widget.dm.checkUser();
+      if (signedIn) {
+        setState(() {
+          widget.dm.setToggleLoading(false);
+        });
+        // GO SOMEWHERE
+        nav_PushAndRemove(context, UserBrowse(dm: widget.dm));
+      }
     } else {
       setState(() {
         widget.dm.setToggleLoading(false);
@@ -58,6 +62,8 @@ class _LoginState extends State<Login> {
   void init() async {
     setState(() {
       widget.dm.setToggleLoading(true);
+      widget.dm.setToggleSplash(true);
+      widget.dm.setToggleSplash2(false);
     });
     final signedIn = await widget.dm.checkUser();
     if (signedIn) {
@@ -82,7 +88,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return MainView(
-      backgroundColor: hexToColor("#4D76FF"),
+      backgroundColor: Colors.white,
       dm: widget.dm,
       children: [
         Expanded(
@@ -91,65 +97,72 @@ class _LoginState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PaddingView(
-                paddingTop: 0,
                 paddingBottom: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ButtonView(
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            TextView(
-                              text: 'browse',
-                              color: Colors.white,
-                              size: 20,
-                              weight: FontWeight.w600,
-                              wrap: false,
-                            ),
-                          ],
+                        child: PillView(
+                          backgroundColor: hexToColor("#F5F5FC"),
+                          child: const Row(
+                            children: [
+                              Icon(
+                                Icons.arrow_back,
+                                size: 18,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              TextView(
+                                text: 'browse',
+                                size: 16,
+                                weight: FontWeight.w600,
+                                wrap: false,
+                              ),
+                            ],
+                          ),
                         ),
                         onPress: () {
+                          setState(() {
+                            widget.dm.setToggleSplash(false);
+                            widget.dm.setToggleSplash2(true);
+                          });
                           nav_PushAndRemove(context, Browse(dm: widget.dm));
                         }),
                     ButtonView(
-                        child: const Row(
-                          children: [
-                            TextView(
-                              text: 'sign up',
-                              color: Colors.white,
-                              size: 20,
-                              weight: FontWeight.w600,
-                              wrap: false,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            )
-                          ],
+                        child: PillView(
+                          backgroundColor: hexToColor("#F5F5FC"),
+                          child: const Row(
+                            children: [
+                              TextView(
+                                text: 'sign up',
+                                size: 16,
+                                weight: FontWeight.w600,
+                                wrap: false,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.arrow_forward,
+                                size: 18,
+                              )
+                            ],
+                          ),
                         ),
                         onPress: () {
-                          nav_Push(context, SignUp(dm: widget.dm));
+                          setState(() {
+                            widget.dm.setToggleSplash(false);
+                            widget.dm.setToggleSplash2(true);
+                          });
+                          nav_Push(context, SignUp(dm: widget.dm), () {
+                            setState(() {
+                              widget.dm.setToggleSplash(true);
+                              widget.dm.setToggleSplash2(false);
+                            });
+                          });
                         }),
                   ],
-                ),
-              ),
-              const Spacer(),
-              Center(
-                child: ImageView(
-                  imagePath: 'assets/logo.png',
-                  width: getWidth(context) * 0.8,
-                  height: getWidth(context) * 0.8,
-                  objectFit: BoxFit.fill,
                 ),
               ),
               const Spacer(), // This will push the text to the bottom
@@ -159,32 +172,29 @@ class _LoginState extends State<Login> {
                   children: [
                     const TextView(
                       text: 'Login',
-                      size: 40,
+                      size: 50,
                       weight: FontWeight.w800,
                       spacing: -2,
-                      color: Colors.white,
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     TextfieldView(
                       controller: _emailController,
-                      color: Colors.white,
-                      placeholderColor: Colors.white60,
                       placeholder: 'Email',
                       keyboardType: TextInputType.emailAddress,
                       size: 18,
+                      backgroundColor: hexToColor("#F5F5FC"),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     TextfieldView(
                       controller: _passwordController,
-                      color: Colors.white,
-                      placeholderColor: Colors.white60,
                       placeholder: 'Password',
                       size: 18,
                       isPassword: true,
+                      backgroundColor: hexToColor("#F5F5FC"),
                     ),
                     const SizedBox(
                       height: 10,
@@ -196,9 +206,8 @@ class _LoginState extends State<Login> {
                             child: const TextView(
                               text: 'forgot password?',
                               wrap: false,
-                              size: 16,
-                              color: Colors.white70,
-                              weight: FontWeight.w500,
+                              size: 18,
+                              weight: FontWeight.w600,
                             ),
                             onPress: () async {
                               final success = await auth_ForgotPassword(
@@ -220,17 +229,14 @@ class _LoginState extends State<Login> {
                               }
                             }),
                         ButtonView(
-                            radius: 100,
-                            backgroundColor: Colors.white,
-                            paddingTop: 8,
-                            paddingBottom: 8,
-                            paddingLeft: 18,
-                            paddingRight: 18,
-                            child: const TextView(
-                              text: 'login',
-                              size: 16,
-                              wrap: false,
-                              weight: FontWeight.w500,
+                            child: PillView(
+                              backgroundColor: hexToColor("#F5F5FC"),
+                              child: TextView(
+                                text: 'login',
+                                size: 18,
+                                wrap: false,
+                                weight: FontWeight.w500,
+                              ),
                             ),
                             onPress: () {
                               onLogin();

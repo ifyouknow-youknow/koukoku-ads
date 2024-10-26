@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
 
 part 'toggles.dart';
 part 'strings.dart';

@@ -1,5 +1,5 @@
-name: koukoku_ads
-description: "Official Flutter IIC app template."
+name: ads_mahem
+description: "Where advertisements are wanted.."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -70,7 +70,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/launcher-icon.png" # Your main icon image
-  adaptive_icon_background: "#000000"    # Specify a background color or image
+  adaptive_icon_background: "#ffffff"    # Specify a background color or image
   adaptive_icon_foreground: "assets/launcher-icon.png" # Foreground icon image
 
 
@@ -101,6 +101,8 @@ flutter:
     - assets/nomore.png
     - assets/ilove.png
     - assets/ad1.png
+    - assets/splash.png
+    - assets/splash2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

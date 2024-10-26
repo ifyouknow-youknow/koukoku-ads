@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "Koukoku Ads" "\0"
+            VALUE "FileDescription", "Ads Mahem" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Koukoku Ads" "\0"
+            VALUE "InternalName", "Ads Mahem" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "Koukoku Ads.exe" "\0"
-            VALUE "ProductName", "Koukoku Ads" "\0"
+            VALUE "OriginalFilename", "Ads Mahem.exe" "\0"
+            VALUE "ProductName", "Ads Mahem" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

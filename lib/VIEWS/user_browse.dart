@@ -2,28 +2,30 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/COMPONENTS/asyncimage_view.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/future_view.dart';
-import 'package:koukoku_ads/COMPONENTS/image_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/array.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/location.dart';
-import 'package:koukoku_ads/FUNCTIONS/misc.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/geohash.dart';
-import 'package:koukoku_ads/VIEWS/filters.dart';
-import 'package:koukoku_ads/VIEWS/login.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/profile.dart';
-import 'package:koukoku_ads/VIEWS/user_business_profile.dart';
+import 'package:ads_mahem/COMPONENTS/asyncimage_view.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/future_view.dart';
+import 'package:ads_mahem/COMPONENTS/iconbutton_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/roundedcorners_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/FUNCTIONS/array.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/location.dart';
+import 'package:ads_mahem/FUNCTIONS/misc.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/geohash.dart';
+import 'package:ads_mahem/VIEWS/filters.dart';
+import 'package:ads_mahem/VIEWS/login.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
+import 'package:ads_mahem/VIEWS/profile.dart';
+import 'package:ads_mahem/VIEWS/user_business_profile.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class UserBrowse extends StatefulWidget {
@@ -221,9 +223,11 @@ class _UserBrowseState extends State<UserBrowse> {
               radius: 10,
               onPress: () async {
                 final success = await firebase_CreateDocument(
-                    '${appName}_Clicks',
-                    randomString(25),
-                    {'userId': widget.dm.user['id'], 'adId': ads[i]['id']});
+                    '${appName}_Clicks', randomString(25), {
+                  'userId': widget.dm.user['id'],
+                  'adId': ads[i]['id'],
+                  'geohash': widget.dm.user['geohash']
+                });
                 if (success) {
                   nav_Push(
                     context,
@@ -265,6 +269,10 @@ class _UserBrowseState extends State<UserBrowse> {
   }
 
   void init() async {
+    setState(() {
+      widget.dm.setToggleSplash2(true);
+    });
+    print(widget.dm.user);
     if (widget.dm.user['geohash'] == null) {
       final loc = await getLocation(context);
       if (loc != null) {
@@ -304,31 +312,18 @@ class _UserBrowseState extends State<UserBrowse> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
-                children: [
-                  ImageView(
-                    imagePath: 'assets/logo.png',
-                    width: 30,
-                    height: 30,
-                    radius: 6,
-                  ),
-                  SizedBox(width: 6),
-                  TextView(
-                    text: 'Explore',
-                    size: 18,
-                    weight: FontWeight.w500,
-                    wrap: false,
-                  ),
-                ],
+              TextView(
+                text: 'Explore',
+                size: 20,
+                weight: FontWeight.w600,
+                wrap: false,
               ),
               Row(
                 children: [
-                  ButtonView(
-                    child: Icon(
-                      Icons.tune_outlined,
-                      size: 34,
-                      color: hexToColor('#353841'),
-                    ),
+                  IconButtonView(
+                    backgroundColor: Colors.black,
+                    icon: Icons.tune_outlined,
+                    iconColor: Colors.white,
                     onPress: () {
                       nav_Push(context, Filters(dm: widget.dm), () {
                         lastDoc = null;
@@ -339,12 +334,10 @@ class _UserBrowseState extends State<UserBrowse> {
                   SizedBox(
                     width: 10,
                   ),
-                  ButtonView(
-                    child: Icon(
-                      Icons.face,
-                      color: hexToColor("#3490F3"),
-                      size: 34,
-                    ),
+                  IconButtonView(
+                    backgroundColor: Colors.black,
+                    icon: Icons.person,
+                    iconColor: Colors.white,
                     onPress: () {
                       nav_Push(context, Profile(dm: widget.dm), () {
                         setState(() {});
@@ -367,34 +360,37 @@ class _UserBrowseState extends State<UserBrowse> {
                   ),
                   if (_noMore)
                     ImageView(
-                      imagePath: 'assets/nomore.png',
-                      width: getWidth(context) * 0.8,
-                      height: getWidth(context) * 0.6,
-                      objectFit: BoxFit.contain,
-                    ),
+                        imagePath: 'assets/nomore.png',
+                        width: getWidth(context) * 0.8,
+                        height: getWidth(context) * 0.6,
+                        objectFit: BoxFit.contain,
+                        radius: 20),
                   if (!_noMore)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         PaddingView(
                           child: ButtonView(
-                              child: Row(
-                                children: [
-                                  TextView(
-                                    text: 'see more',
-                                    size: 20,
-                                    weight: FontWeight.w500,
-                                    spacing: -1,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Icon(
-                                    Icons.waving_hand_outlined,
-                                    size: 24,
-                                    color: hexToColor("#3490F3"),
-                                  )
-                                ],
+                              child: PillView(
+                                backgroundColor: hexToColor("#F5F5FC"),
+                                child: Row(
+                                  children: [
+                                    TextView(
+                                      text: 'see more',
+                                      size: 20,
+                                      weight: FontWeight.w500,
+                                      spacing: -1,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Icon(
+                                      Icons.waving_hand_outlined,
+                                      size: 24,
+                                      color: hexToColor("#3490F3"),
+                                    )
+                                  ],
+                                ),
                               ),
                               onPress: () {
                                 _fetchLocalAds();
@@ -426,23 +422,20 @@ class _UserBrowseState extends State<UserBrowse> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ButtonView(
-                        paddingTop: 8,
-                        paddingBottom: 8,
-                        paddingLeft: 18,
-                        paddingRight: 18,
-                        radius: 100,
-                        backgroundColor: hexToColor('#3490F3'),
-                        child: Row(
-                          children: [
-                            TextView(
-                              text: 'Get Location',
-                              size: 16,
-                              weight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                            Icon(Icons.location_on,
-                                size: 26, color: Colors.white)
-                          ],
+                        child: PillView(
+                          backgroundColor: hexToColor("#4D76FF"),
+                          child: Row(
+                            children: [
+                              TextView(
+                                text: 'Get Location',
+                                size: 16,
+                                weight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              Icon(Icons.location_on,
+                                  size: 26, color: Colors.white)
+                            ],
+                          ),
                         ),
                         onPress: () async {
                           final loc = await getLocation(context);
@@ -450,10 +443,14 @@ class _UserBrowseState extends State<UserBrowse> {
                             final geohash =
                                 Geohash.encode(loc.latitude, loc.longitude);
                             final succ = await firebase_CreateDocument(
-                                '${geohash}_Users',
+                                '${appName}_Users',
                                 widget.dm.user['id'],
                                 {'geohash': geohash});
                             if (succ) {
+                              setState(() {
+                                widget.dm.setUser(
+                                    {...widget.dm.user, "geohash": geohash});
+                              });
                               setState(() {
                                 widget.dm.setMyLocation(
                                     LatLng(loc.latitude, loc.longitude));

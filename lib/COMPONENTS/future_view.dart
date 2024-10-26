@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/loading_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/COMPONENTS/loading_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
 
 class FutureView extends StatefulWidget {
   final Future<dynamic> future;

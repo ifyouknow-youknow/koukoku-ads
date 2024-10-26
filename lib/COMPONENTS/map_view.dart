@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/textfield_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/textfield_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 

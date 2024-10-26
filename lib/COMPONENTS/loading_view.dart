@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/blur_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/COMPONENTS/blur_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});

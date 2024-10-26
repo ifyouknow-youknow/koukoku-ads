@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/roundedcorners_view.dart';
 
 class PillView extends StatefulWidget {
   final Widget child;

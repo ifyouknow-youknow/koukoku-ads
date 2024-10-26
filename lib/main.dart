@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/VIEWS/login.dart';
-import 'package:koukoku_ads/VIEWS/playground.dart';
-import 'package:koukoku_ads/firebase_options.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/VIEWS/login.dart';
+import 'package:ads_mahem/VIEWS/playground.dart';
+import 'package:ads_mahem/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/image_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/roundedcorners_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/COMPONENTS/textfield_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
-import 'package:koukoku_ads/VIEWS/user_browse.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/roundedcorners_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/COMPONENTS/textfield_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
+import 'package:ads_mahem/VIEWS/user_browse.dart';
 
 class SignUp extends StatefulWidget {
   final DataMaster dm;
@@ -94,33 +95,36 @@ class _SignUpState extends State<SignUp> {
               children: [
                 ButtonView(
                   onPress: () {
+                    setState(() {
+                      widget.dm.setToggleSplash(true);
+                      widget.dm.setToggleSplash2(false);
+                    });
                     nav_Pop(context);
                   },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.chevron_left,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                      const TextView(
-                        text: 'back',
-                        size: 18,
-                        color: Colors.white,
-                        weight: FontWeight.w600,
-                        wrap: false,
-                      ),
-                    ],
+                  child: PillView(
+                    backgroundColor: hexToColor("#F5F5FC"),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.arrow_back,
+                          size: 18,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        const TextView(
+                          text: 'back',
+                          size: 16,
+                          weight: FontWeight.w600,
+                          wrap: false,
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
             ),
-          ),
-          ImageView(
-            imagePath: 'assets/logo.png',
-            width: getWidth(context) * 0.2,
-            height: getWidth(context) * 0.2,
           ),
           // MAIN
           Expanded(
@@ -307,16 +311,14 @@ class _SignUpState extends State<SignUp> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ButtonView(
-                    paddingTop: 8,
-                    paddingBottom: 8,
-                    paddingLeft: 18,
-                    paddingRight: 18,
-                    radius: 100,
-                    backgroundColor: Colors.white,
-                    child: TextView(
-                      text: 'sign up',
-                      size: 16,
-                      weight: FontWeight.w500,
+                    child: PillView(
+                      backgroundColor: hexToColor("#FF5858"),
+                      child: TextView(
+                        text: 'sign up',
+                        size: 20,
+                        weight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                     onPress: () {
                       onSignUp();

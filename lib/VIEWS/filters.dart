@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:koukoku_ads/COMPONENTS/border_view.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/main_view.dart';
-import 'package:koukoku_ads/COMPONENTS/map_view.dart';
-import 'package:koukoku_ads/COMPONENTS/padding_view.dart';
-import 'package:koukoku_ads/COMPONENTS/pill_view.dart';
-import 'package:koukoku_ads/COMPONENTS/slider_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/FUNCTIONS/nav.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/constants.dart';
-import 'package:koukoku_ads/MODELS/firebase.dart';
-import 'package:koukoku_ads/MODELS/geohash.dart';
+import 'package:ads_mahem/COMPONENTS/border_view.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/main_view.dart';
+import 'package:ads_mahem/COMPONENTS/map_view.dart';
+import 'package:ads_mahem/COMPONENTS/padding_view.dart';
+import 'package:ads_mahem/COMPONENTS/pill_view.dart';
+import 'package:ads_mahem/COMPONENTS/slider_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/FUNCTIONS/nav.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/constants.dart';
+import 'package:ads_mahem/MODELS/firebase.dart';
+import 'package:ads_mahem/MODELS/geohash.dart';
 
 class Filters extends StatefulWidget {
   final DataMaster dm;
@@ -24,7 +24,7 @@ class Filters extends StatefulWidget {
 }
 
 class _FiltersState extends State<Filters> {
-  int _distance = 30;
+  int _distance = 60;
   String _category = "";
   List<String> _categories = [];
 
@@ -165,18 +165,21 @@ class _FiltersState extends State<Filters> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ButtonView(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.chevron_left,
-                      size: 26,
-                    ),
-                    TextView(
-                      text: 'back',
-                      size: 18,
-                    )
-                  ],
+                child: PillView(
+                  backgroundColor: hexToColor("#F5F5FC"),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.arrow_back,
+                        size: 18,
+                      ),
+                      TextView(
+                        text: 'back',
+                        size: 16,
+                      )
+                    ],
+                  ),
                 ),
                 onPress: () {
                   widget.dm.setToggleAlert(false);
@@ -186,12 +189,12 @@ class _FiltersState extends State<Filters> {
                 }),
             ButtonView(
                 child: PillView(
-                  backgroundColor: hexToColor('#3490F3'),
+                  backgroundColor: hexToColor('#FF5858'),
                   child: TextView(
                     text: 'save',
                     color: Colors.white,
-                    size: 16,
-                    weight: FontWeight.w500,
+                    size: 18,
+                    weight: FontWeight.w600,
                   ),
                 ),
                 onPress: () {
@@ -204,6 +207,7 @@ class _FiltersState extends State<Filters> {
       Expanded(
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // DISTANCE
               PaddingView(
@@ -239,7 +243,7 @@ class _FiltersState extends State<Filters> {
                         child: SliderView(
                       start: _distance.toDouble(),
                       min: 1,
-                      max: 30,
+                      max: 60,
                       increment: 1,
                       onChange: (value) {
                         setState(() {
@@ -248,7 +252,7 @@ class _FiltersState extends State<Filters> {
                       },
                     )),
                     TextView(
-                      text: '30km',
+                      text: '60km',
                       weight: FontWeight.w400,
                     ),
                   ],
@@ -351,7 +355,7 @@ class _FiltersState extends State<Filters> {
                   paddingBottom: 40,
                   child: TextView(
                     text: 'A nothing bagel.',
-                    color: Colors.black54,
+                    color: Colors.black,
                   )),
             ],
           ),

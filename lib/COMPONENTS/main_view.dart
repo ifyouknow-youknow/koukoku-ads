@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:koukoku_ads/COMPONENTS/alert_view.dart';
-import 'package:koukoku_ads/COMPONENTS/bubble_view.dart';
-import 'package:koukoku_ads/COMPONENTS/button_view.dart';
-import 'package:koukoku_ads/COMPONENTS/loading_view.dart';
-import 'package:koukoku_ads/COMPONENTS/text_view.dart';
-import 'package:koukoku_ads/FUNCTIONS/colors.dart';
-import 'package:koukoku_ads/MODELS/DATAMASTER/datamaster.dart';
-import 'package:koukoku_ads/MODELS/screen.dart';
+import 'package:ads_mahem/COMPONENTS/alert_view.dart';
+import 'package:ads_mahem/COMPONENTS/bubble_view.dart';
+import 'package:ads_mahem/COMPONENTS/button_view.dart';
+import 'package:ads_mahem/COMPONENTS/image_view.dart';
+import 'package:ads_mahem/COMPONENTS/loading_view.dart';
+import 'package:ads_mahem/COMPONENTS/text_view.dart';
+import 'package:ads_mahem/FUNCTIONS/colors.dart';
+import 'package:ads_mahem/MODELS/DATAMASTER/datamaster.dart';
+import 'package:ads_mahem/MODELS/screen.dart';
 
 class MainView extends StatefulWidget {
   final DataMaster dm;
@@ -34,6 +35,14 @@ class _MainViewState extends State<MainView> {
         height: getHeight(context),
         child: Stack(
           children: [
+            if (widget.dm.toggleSplash)
+              Positioned.fill(
+                child: ImageView(imagePath: 'assets/splash.png'),
+              ),
+            if (widget.dm.toggleSplash2)
+              Positioned.fill(
+                child: ImageView(imagePath: 'assets/splash2.png'),
+              ),
             Column(
               children: [
                 const SizedBox(

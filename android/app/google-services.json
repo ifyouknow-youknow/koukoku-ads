@@ -7,9 +7,123 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:652404ee2d31db66fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.AdsMahem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:82e2dfd6d5da2fd4fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.EDMAdminApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:27c8c280c7769320fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.EDMTeachersApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:264501829712:android:c6b45292987a32cefb7155",
         "android_client_info": {
-          "package_name": "com.iicdev.KoukokuAds"
+          "package_name": "com.iicdev.FlutterAppTemplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:32cfe107d830f701fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.KoukokuBusiness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:bf323a8d37f48446fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.NothingBagelAppTemplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArBMWW4ZXFp0MUOR2b681nNe7JqsyCaxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264501829712:android:b5e2bacc5a0c39c1fb7155",
+        "android_client_info": {
+          "package_name": "com.iicdev.TimerTasks"
         }
       },
       "oauth_client": [],
