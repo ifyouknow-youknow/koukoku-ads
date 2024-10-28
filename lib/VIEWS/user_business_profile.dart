@@ -489,8 +489,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                       Center(
                         child: ButtonView(
                           onPress: () async {
-                            final signedIn = await widget.dm.checkUser();
-                            if (widget.ad['isCoupon'] && signedIn) {
+                            if (widget.ad['isCoupon']) {
                               final isGood = await onCheckScan();
                               if (isGood) {
                                 setState(() {
@@ -504,8 +503,6 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                                       'This coupon has already been redeemed by the business. Explore other offers and ads they have shared!');
                                 });
                               }
-                            } else {
-                              nav_Push(context, Login(dm: widget.dm));
                             }
                           },
                           child: AsyncImageView(
@@ -519,7 +516,7 @@ class _UserBusinessProfileState extends State<UserBusinessProfile> {
                           ),
                         ),
                       ),
-                    if (_toggleQR)
+                    if (_toggleQR && widget.ad['isCoupon'])
                       Center(
                         child: ButtonView(
                             onPress: () {

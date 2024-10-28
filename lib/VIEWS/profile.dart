@@ -59,7 +59,100 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  void onDeleteAccount() async {}
+  void onDeleteAccount() async {
+    setState(() {
+      widget.dm.setToggleAlert(true);
+      widget.dm.setAlertTitle('Delete Account');
+      widget.dm.setAlertText(
+          'Are you sure you want to delete your account? This action cannot be reversed.');
+      widget.dm.setAlertButtons([
+        PaddingView(
+          paddingTop: 0,
+          paddingBottom: 0,
+          child: ButtonView(
+              child: PillView(
+                  backgroundColor: Colors.red,
+                  child: TextView(
+                    text: 'delete account',
+                    color: Colors.white,
+                    size: 18,
+                  )),
+              onPress: () async {
+                setState(() {
+                  widget.dm.setToggleAlert(false);
+                  widget.dm.setToggleLoading(true);
+                });
+
+                final user = await auth_CheckUser();
+                final userId = widget.dm.user['id'];
+                if (user != null) {
+                  final success = await auth_DeleteUser(user);
+                  if (success) {
+                    // SCANS
+                    final scans = await firebase_GetAllDocumentsQueried(
+                        '${appName}_Scans', [
+                      {'field': 'userId', 'operator': '==', 'value': userId}
+                    ]);
+                    for (var scan in scans) {
+                      await firebase_DeleteDocument(
+                          '${appName}_Scans', scan['id']);
+                    }
+                    // FOLLOWING
+                    final follows = await firebase_GetAllDocumentsQueried(
+                        '${appName}_Following', [
+                      {'field': 'userId', 'operator': '==', 'value': userId}
+                    ]);
+                    for (var follow in follows) {
+                      await firebase_DeleteDocument(
+                          '${appName}_Following', follow['id']);
+                    }
+                    // FAVORITES
+                    final faves = await firebase_GetAllDocumentsQueried(
+                        '${appName}_Favorites', [
+                      {'field': 'userId', 'operator': '==', 'value': userId}
+                    ]);
+                    for (var fav in faves) {
+                      await firebase_DeleteDocument(
+                          '${appName}_Favorites', fav['id']);
+                    }
+                    // VIEWS
+                    final views = await firebase_GetAllDocumentsQueried(
+                        '${appName}_Views', [
+                      {'field': 'userId', 'operator': '==', 'value': userId}
+                    ]);
+                    for (var view in views) {
+                      await firebase_DeleteDocument(
+                          '${appName}_Views', view['id']);
+                    }
+                    // CLICKS
+                    final clicks = await firebase_GetAllDocumentsQueried(
+                        '${appName}_Clicks', [
+                      {'field': 'userId', 'operator': '==', 'value': userId}
+                    ]);
+                    for (var click in clicks) {
+                      await firebase_DeleteDocument(
+                          '${appName}_Clicks', click['id']);
+                    }
+                    // DOC
+                    final success = await firebase_DeleteDocument(
+                        '${appName}_Users', userId);
+                    if (success) {
+                      nav_PushAndRemove(context, Login(dm: widget.dm));
+                      setState(() {
+                        widget.dm.setToggleLoading(false);
+                        widget.dm.setToggleAlert(true);
+                        widget.dm.setAlertTitle('Account Removed');
+                        widget.dm.setAlertText(
+                            'Your account was successfully removed.');
+                      });
+                    }
+                  }
+                }
+              }),
+        )
+      ]);
+    });
+  }
 
   Future<List<dynamic>> _fetchFavorites() async {
     final docs = await firebase_GetAllDocumentsQueried('${appName}_Favorites', [

@@ -98,13 +98,13 @@ class _UserBrowseState extends State<UserBrowse> {
         distance: distance,
         lastDoc: lastDoc,
       );
-
       if (docs.isNotEmpty) {
         setState(() {
           lastDoc = docs.last?['doc']; // Update lastDoc for pagination
           ads.addAll(docs); // Append new ads to the existing list
         });
       } else if (docs.isEmpty || docs.length < limit) {
+        print("WE ARE EMPTY");
         setState(() {
           _noMore = true;
         });

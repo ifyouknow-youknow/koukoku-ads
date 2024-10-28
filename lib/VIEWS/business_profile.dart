@@ -51,7 +51,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     var twoByTwo = [];
 
     // Fetch documents from Firebase
-    final docs = await firebase_GetAllDocumentsQueried('AdsMahem_Campaigns', [
+    final docs = await firebase_GetAllDocumentsQueried('${appName}_Campaigns', [
       {'field': 'userId', 'operator': '==', 'value': widget.ad['userId']},
       {'field': 'active', 'operator': '==', 'value': true}
     ]);
@@ -288,6 +288,27 @@ class _BusinessProfileState extends State<BusinessProfile> {
         widget.dm.setAlertText('This coupon has expired.');
       });
     }
+
+    setState(() {
+      widget.dm.setToggleAlert(true);
+      widget.dm.setAlertTitle('Log In');
+      widget.dm.setAlertText(
+          'To get access to all features, please log in or sign up.');
+      widget.dm.setAlertButtons([
+        ButtonView(
+            child: PillView(
+                backgroundColor: hexToColor("#4D76FF"),
+                child: TextView(
+                  text: 'log in',
+                  color: Colors.white,
+                  size: 18,
+                  weight: FontWeight.w500,
+                )),
+            onPress: () {
+              nav_PushAndRemove(context, Login(dm: widget.dm));
+            })
+      ]);
+    });
   }
 
   @override
@@ -344,14 +365,27 @@ class _BusinessProfileState extends State<BusinessProfile> {
                       Center(
                         child: ButtonView(
                           onPress: () async {
-                            final signedIn = await widget.dm.checkUser();
-                            if (widget.ad['isCoupon'] && signedIn) {
-                              setState(() {
-                                _toggleQR = true;
-                              });
-                            } else {
-                              nav_Push(context, Login(dm: widget.dm));
-                            }
+                            setState(() {
+                              widget.dm.setToggleAlert(true);
+                              widget.dm.setAlertTitle('Log In');
+                              widget.dm.setAlertText(
+                                  'To get access to all features, please log in or sign up.');
+                              widget.dm.setAlertButtons([
+                                ButtonView(
+                                    child: PillView(
+                                        backgroundColor: hexToColor("#4D76FF"),
+                                        child: TextView(
+                                          text: 'log in',
+                                          color: Colors.white,
+                                          size: 18,
+                                          weight: FontWeight.w500,
+                                        )),
+                                    onPress: () {
+                                      nav_PushAndRemove(
+                                          context, Login(dm: widget.dm));
+                                    })
+                              ]);
+                            });
                           },
                           child: AsyncImageView(
                             imagePath: widget.ad['imagePath'],

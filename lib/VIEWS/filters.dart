@@ -1,3 +1,4 @@
+import 'package:ads_mahem/MODELS/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ads_mahem/COMPONENTS/border_view.dart';
@@ -291,16 +292,44 @@ class _FiltersState extends State<Filters> {
               // CATEGORIES
               PaddingView(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextView(
-                      text: 'Categories',
-                      size: 22,
-                      weight: FontWeight.w400,
-                      spacing: -1,
+                    SizedBox(
+                      width: getWidth(context) * 0.75,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextView(
+                            text: 'Categories',
+                            size: 22,
+                            weight: FontWeight.w400,
+                            spacing: -1,
+                          ),
+                          TextView(
+                            text:
+                                'Select a category to filter your ad feed. If no category is chosen, all ads will be displayed.',
+                            size: 14,
+                            wrap: true,
+                          )
+                        ],
+                      ),
                     ),
+                    ButtonView(
+                        child: TextView(
+                          text: 'clear',
+                          size: 17,
+                          isUnderlined: true,
+                        ),
+                        onPress: () {
+                          setState(() {
+                            _category = "";
+                          });
+                        })
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               for (var cat in _categories)
                 PaddingView(
